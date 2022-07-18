@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install --upgrade pip setuptools
-          CC=mpicc HDF_MPI="ON" HDF5_DIR="/usr/local" pip3 install --no-cache-dir -r docker/requirements.txt
+          CC=mpicc HDF_MPI="ON" HDF5_DIR="/usr/local" pip3 install --no-cache-dir -r deps/requirements.txt
           apt-get -qq update
           apt-get install -y libgl1-mesa-dev xvfb nodejs
           apt-get clean

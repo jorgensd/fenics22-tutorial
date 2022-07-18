@@ -1,0 +1,33 @@
+# Various jupyterlab components
+setuptools
+jupyterhub
+jupyterlab
+jupyter-book
+
+# Notebook conversion
+nbconvert
+
+# Meshio
+meshio
+--no-binary=h5py
+h5py
+
+# Visualization with pandas
+seaborn
+pandas
+
+# Visualization with Pyvista 
+matplotlib
+
+# Until VTK is released with wheels for python 3.10
+--find-links https://wheels.pyvista.org/
+pyvista
+
+pythreejs
+ipygany
+
+# Progress bar
+tqdm
+
+# To resolve black dependency conflict
+click
