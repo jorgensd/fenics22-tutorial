@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+name: Test tutorial against DOLFINx main branch
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  # Test every day at 9 am
+  schedule:
+    - cron: "* 9 * * 1"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test-against-master:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: dolfinx/lab
+
+    env:
+      HDF5_MPI: "ON"
+      PYVISTA_OFF_SCREEN: true
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          pip3 install --upgrade pip setuptools
+          CC=mpicc HDF_MPI="ON" HDF5_DIR="/usr/local" pip3 install --no-cache-dir -r deps/requirements.txt
+          apt-get -qq update
+          apt-get install -y libgl1-mesa-dev xvfb nodejs
+          apt-get clean
+          rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+          jupyter nbextension enable --py --sys-prefix ipygany 
+          rm -rf /usr/local/share/.cache/*
+          jupyter-book -h
+
+      # - name: Test complex notebooks in parallel
+      #   run: |
+      #     export PKG_CONFIG_PATH=/usr/local/dolfinx-complex/lib/pkgconfig:$PKG_CONFIG_PATH
+      #     export PETSC_ARCH=linux-gnu-complex-32
+      #     export PYTHONPATH=/usr/local/dolfinx-complex/lib/python3.10/dist-packages:$PYTHONPATH
+      #     export LD_LIBRARY_PATH=/usr/local/dolfinx-complex/lib:$LD_LIBRARY_PATH
+ 
+      # - name: Test real notebooks in parallel
+      #   run: |
+
+      - name: Test building the book
+        run: 
+          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
