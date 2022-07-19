@@ -70,15 +70,15 @@ local_domain =  mesh.create_rectangle(MPI.COMM_SELF,
 
 # $$
 # \begin{align*}
-# \frac{u_{n+1}-u_n}{\Delta t} - \nabla \cdot (\mu  \nabla u_{n+1}) &= f(x,t) \qquad \text{in } \Omega,\\
-# u &= u_D(x,t) \qquad \text{on } \partial\Omega_D,\\
-# \mu\frac{\partial u}{\partial n} &=0 \qquad \text{on } \partial\Omega_N
+# \frac{u_{n+1}-u_n}{\Delta t} - \nabla \cdot (\mu  \nabla u_{n+1}) &= f(x,t_{n+1}) \qquad \text{in } \Omega,\\
+# u &= u_D(x,t_{n+1}) \qquad \text{on } \partial\Omega_D,\\
+# \mu\frac{\partial u_{n+1}}{\partial n} &=0 \qquad \text{on } \partial\Omega_N
 # \end{align*}
 # $$ 
 # with $u_D = \sin(t)\cos(y)$, $f=0$.
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# We start by defining the function space, the corresponding test and trial functions, as well as material and temporal parameters. We note that we use explicit imports from ufl to create the test and trial functions, to avoid confusion as to where they originate from. DOLFINx and UFL supports both real and complex valued functions. However, to be able to the PETSc linear algebra backend, which only supports a single floating type at compilation, we need to use appropriate scalar types in our variational form. This ensures that we generate consistent matrices/vectors
+# We start by defining the function space, the corresponding test and trial functions, as well as material and temporal parameters. We note that we use explicit imports from ufl to create the test and trial functions, to avoid confusion as to where they originate from. DOLFINx and UFL supports both real and complex valued functions. However, to be able to use the PETSc linear algebra backend, which only supports a single floating type at compilation, we need to use appropriate scalar types in our variational form. This ensures that we generate consistent matrices/vectors
 # -
 
 from ufl import TestFunction, TrialFunction, dx, grad, inner, system
@@ -100,11 +100,11 @@ F = inner(u - un, v) * dx + mu * inner(grad(u), grad(v)) * dx \
 (a, L) = system(F)
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# ## Creating Dirichlet conditions
+# ## Creating Dirichlet boundary conditions
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # To give the user freedom to set boundary conditions on single degrees of freedom, the `dolfinx.fem.dirichletbc` takes in the list of degrees of freedom as input. These can be obtained in many ways, but we supply a few convenience functions, such as `dolfinx.fem.locate_dofs_topological` and `dolfinx.locate_dofs_geometrical`.
-# Locating dofs topologically is in general adviced, as certain finite elements do not have a geometrical coordinate (Nedelec, RT etc). DOLFINx also has convenicence functions to obtain a list of all boundary facets.
+# Locating dofs topologically is generally advised, as certain finite elements dofs do not have a geometrical coordinate (Nedelec, RT etc). DOLFINx also has convenicence functions to obtain a list of all boundary facets.
 
 # +
 import numpy as np
