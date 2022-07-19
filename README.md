@@ -10,7 +10,7 @@ Add a chapter to `_toc.yml`.
 Inside the Jupyter notebook, go to `Property Inspector` (the two cogwheels in the top right corner of JupyterLab)
 and add the following as notebook metadata:
 ```yml
- "metadata": {
+ {
   "jupytext": {
    "formats": "ipynb,py:light"
   },
@@ -69,3 +69,18 @@ If a cell should be revealed with `Right Arrow`, choose `Fragment`.
 If you want a sub-slide, i.e. navigating downwards with arrows when rendering the presentation, change the type to `Sub-Slide`.
 
 If a cell should be ignored in presentation mode, set it to `Notes`.
+
+### Automatically generate slides
+By adding the following file to the (`jupyter_server_config.py`) `.jupyter` folder on your system. 
+You might need to rename it to `jupyter_notebook_config.py`.
+To check the config paths, call:
+```bash
+jupyter server --show-config
+jupyter notebook --show-config
+```
+
+If you run the code with `dokken92/dolfinx_custom:15072022` or `dolfinx/lab` using for instance:
+```bash
+docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dokken92/dolfinx_custom:15072022
+```
+no copying is required.
