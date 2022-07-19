@@ -47,8 +47,8 @@ domain = mesh.create_rectangle(MPI.COMM_WORLD,
 # As opposed to DOLFIN, we work on simply python structures (nested listes/numpy arrays).
 # We also note that we have to send in a communicator. This is because we want the user to be aware of how the mesh is distributed when running in parallel. 
 # If we would use the communicator `MPI.COMM_SELF`, each process initialized when running the script would have a mesh local to its process.
-# -
 
+# + [markdown] slideshow={"slide_type": "subslide"} tags=[]
 # ## Creating a mesh on each process
 
 # + tags=[]
@@ -56,6 +56,6 @@ local_domain =  mesh.create_rectangle(MPI.COMM_SELF,
                                [[0.,0.],[2.,3.]],
                                [15, 20], 
                                cell_type=mesh.CellType.quadrilateral)
-# -
-
+# +
+## Setting up a variational problem
 
