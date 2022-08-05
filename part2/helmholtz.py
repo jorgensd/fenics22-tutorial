@@ -16,16 +16,17 @@
 # + slideshow={"slide_type": "slide"} tags=[]
 # The Helmholtz equation
 
-import numpy as np
+import sys
 
-import ufl
-from dolfinx.fem import Function, FunctionSpace, assemble_scalar, form
-from dolfinx.fem.petsc import LinearProblem
-from dolfinx.io import XDMFFile
-from dolfinx.mesh import create_unit_square
-from ufl import dx, grad, inner
+import numpy as np
 from mpi4py import MPI
 from petsc4py import PETSc
+
+import ufl
+from dolfinx.fem import Function, FunctionSpace
+from dolfinx.fem.petsc import LinearProblem
+from dolfinx.io import XDMFFile, VTXWriter
+from dolfinx.io.gmshio import model_to_mesh
 
 
 if not np.issubdtype(PETSc.ScalarType, np.complexfloating):
@@ -41,24 +42,15 @@ except ModuleNotFoundError:
     sys.exit(0)
 
 # from domain import generate_mesh_wire
-from mesh_gen import generate_mesh
-from dolfinx.io.gmshio import model_to_mesh
+from mesh_generation import generate_mesh
 
 k0 = 10 * np.pi
-lmbda = 1/k0
+lmbda = 2 * np.pi / k0
 
-sct_tag = 1          # scatterer
-bkg_tag = 2         # background
-boundary_tag = 3    # boundary
-
-# model = generate_mesh_wire(
-#     lmbda/2, lmbda*10, lmbda/10, lmbda/10, lmbda/10,
-#     lmbda/10, sct_tag, bkg_tag, boundary_tag)
-model = generate_mesh(lmbda, 1)
+model = generate_mesh(lmbda, 2)
 
 mesh, cell_tags, facet_tags = model_to_mesh(model, MPI.COMM_WORLD, 0, gdim=2)
 gmsh.finalize()
-
 
 # +
 n = ufl.FacetNormal(mesh)
@@ -74,6 +66,7 @@ V = FunctionSpace(mesh, element)
 DG = FunctionSpace(mesh, ("DG", 0))
 k = Function(DG)
 k.x.array[:] = k0
+k.x.array[cell_tags.values == 1] = 2*k0
 
 x = ufl.SpatialCoordinate(mesh)
 ui = ufl.exp(1.0j * k * x[0])
@@ -99,6 +92,11 @@ problem = LinearProblem(a, L, u=uh, petsc_options={
                         "ksp_type": "preonly", "pc_type": "lu"})
 problem.solve()
 
+# XDMF write the solution as a P1 function
 with XDMFFile(MPI.COMM_WORLD, "out.xdmf", "w") as file:
     file.write_mesh(mesh)
     file.write_function(uh)
+
+# VTX can write higher order function
+with VTXWriter(MPI.COMM_WORLD, "out_high_order.bp", uh) as f:
+    f.write(0.0)
