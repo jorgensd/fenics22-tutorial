@@ -40,7 +40,8 @@ except ModuleNotFoundError:
     print("This demo requires gmsh to be installed")
     sys.exit(0)
 
-from domain import generate_mesh_wire
+# from domain import generate_mesh_wire
+from mesh_gen import generate_mesh
 from dolfinx.io.gmshio import model_to_mesh
 
 k0 = 10 * np.pi
@@ -50,10 +51,10 @@ sct_tag = 1          # scatterer
 bkg_tag = 2         # background
 boundary_tag = 3    # boundary
 
-model = generate_mesh_wire(
-    lmbda/2, lmbda*10, lmbda/10, lmbda/10, lmbda/10,
-    lmbda/10, sct_tag, bkg_tag, boundary_tag)
-
+# model = generate_mesh_wire(
+#     lmbda/2, lmbda*10, lmbda/10, lmbda/10, lmbda/10,
+#     lmbda/10, sct_tag, bkg_tag, boundary_tag)
+model = generate_mesh(lmbda, 1)
 
 mesh, cell_tags, facet_tags = model_to_mesh(model, MPI.COMM_WORLD, 0, gdim=2)
 gmsh.finalize()
