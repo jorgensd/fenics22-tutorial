@@ -6,15 +6,15 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.8
+#       jupytext_version: 1.14.1
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3 (DOLFINx complex)
 #     language: python
-#     name: python3
+#     name: python3-complex
 # ---
 
-# + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# # The Helmholtz equation
+# + slideshow={"slide_type": "slide"} tags=[]
+# The Helmholtz equation
 
 import numpy as np
 
@@ -24,27 +24,59 @@ from dolfinx.fem.petsc import LinearProblem
 from dolfinx.io import XDMFFile
 from dolfinx.mesh import create_unit_square
 from ufl import dx, grad, inner
-
 from mpi4py import MPI
 from petsc4py import PETSc
 
 
-mesh = create_unit_square(MPI.COMM_WORLD, 128, 128)
+if not np.issubdtype(PETSc.ScalarType, np.complexfloating):
+    print("This tutorial requires complex number support")
+    exit(0)
+else:
+    print(f"Using {PETSc.ScalarType}.")
+# +
+try:
+    import gmsh
+except ModuleNotFoundError:
+    print("This demo requires gmsh to be installed")
+    sys.exit(0)
+
+from domain import generate_mesh_wire
+from dolfinx.io.gmshio import model_to_mesh
+
+k0 = 10 * np.pi
+lmbda = 1/k0
+
+sct_tag = 1          # scatterer
+bkg_tag = 2         # background
+boundary_tag = 3    # boundary
+
+model = generate_mesh_wire(
+    lmbda/2, lmbda*10, lmbda/10, lmbda/10, lmbda/10,
+    lmbda/10, sct_tag, bkg_tag, boundary_tag)
+
+
+mesh, cell_tags, facet_tags = model_to_mesh(model, MPI.COMM_WORLD, 0, gdim=2)
+gmsh.finalize()
+
+
+# +
 n = ufl.FacetNormal(mesh)
 
 p = 2
-k0 = 10 * np.pi
 
 # Definition of function space
 element = ufl.FiniteElement("Lagrange", ufl.triangle, p)
 V = FunctionSpace(mesh, element)
 
 
-# Incoming wave
-# ui.interpolate(incoming_wave)
+# Define wave number
+DG = FunctionSpace(mesh, ("DG", 0))
+k = Function(DG)
+k.x.array[:] = k0
+
 x = ufl.SpatialCoordinate(mesh)
-ui = ufl.exp(1.0j * k0 * x[0])
-g = ufl.dot(ufl.grad(ui), n) + 1j * k0 * ui
+ui = ufl.exp(1.0j * k * x[0])
+g = ufl.dot(ufl.grad(ui), n) + 1j * k * ui
 
 # Define variational problem
 u = ufl.TrialFunction(V)
@@ -54,8 +86,8 @@ v = ufl.TestFunction(V)
 ds = ufl.Measure("ds", domain=mesh)
 dx = ufl.Measure("dx", domain=mesh)
 a = ufl.inner(ufl.grad(u), ufl.grad(v)) * dx \
-    - k0**2 * ufl.inner(u, v) * dx \
-    + 1j * k0 * ufl.inner(u, v) * ds
+    - k**2 * ufl.inner(u, v) * dx \
+    + 1j * k * ufl.inner(u, v) * ds
 L = ufl.inner(g, v) * ds
 
 
