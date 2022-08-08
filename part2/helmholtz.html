@@ -14921,7 +14921,7 @@ We use the fact that a Discontinuous Galerkin space of order 0 (cell-wise piecew
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Next, we can define the variational problem, using a 4th order Lagrange space. Note that as we are using complex valued functions, we have to use the appropriate inner product, see <a href="https://jorgensd.github.io/dolfinx-tutorial/chapter1/complex_mode.html">DOLFINx tutorial: Complex numbers</a> for more information.</p>
-
+$$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx + \int_{\partial \Omega / \Gamma_D} \left(\nabla u \cdot \mathbf{n} \right) \bar{v} ~ ds = \int_\Omega f \, \bar{v}~ dx \qquad \forall v \in \widehat{V}. $$
 </div>
 </div>
 </div>

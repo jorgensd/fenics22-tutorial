@@ -96,6 +96,9 @@ g = ufl.dot(ufl.grad(ui), n) + 1j * k * ui
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # Next, we can define the variational problem, using a 4th order Lagrange space. Note that as we are using complex valued functions, we have to use the appropriate inner product, see [DOLFINx tutorial: Complex numbers](https://jorgensd.github.io/dolfinx-tutorial/chapter1/complex_mode.html) for more information.
+#
+#
+# $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx + \int_{\partial \Omega / \Gamma_D} \left(\nabla u \cdot \mathbf{n} \right) \bar{v} ~ ds = \int_\Omega f \, \bar{v}~ dx \qquad \forall v \in \widehat{V}. $$
 # -
 
 element = ufl.FiniteElement("Lagrange", mesh.ufl_cell(), 4)
