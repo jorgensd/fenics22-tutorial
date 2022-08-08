@@ -1,19 +1,9 @@
-import sys
-
-try:
-    import gmsh
-except ModuleNotFoundError:
-    print("This tutorial requires gmsh to be installed")
-    sys.exit(0)
-
 from mpi4py import MPI
-
-gmsh.initialize(sys.argv)
+import gmsh
 
 
 def generate_mesh(lmbda, order):
     if MPI.COMM_WORLD.rank == 0:
-
         gmsh.model.add("helmholtz_domain")
 
         # Set the mesh size
