@@ -15,7 +15,7 @@
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # # The Helmholtz equation
-# FIXME: Add mathematics
+# $$ \Delta u + k^2 u = f $$
 # + slideshow={"slide_type": "slide"} tags=[]
 from mpi4py import MPI
 import ufl
