@@ -41,21 +41,19 @@ except ModuleNotFoundError:
     print("This demo requires gmsh to be installed")
     sys.exit(0)
 
-# from domain import generate_mesh_wire
 from mesh_generation import generate_mesh
 
 k0 = 10 * np.pi
 lmbda = 2 * np.pi / k0
 
 model = generate_mesh(lmbda, 2)
-
 mesh, cell_tags, facet_tags = model_to_mesh(model, MPI.COMM_WORLD, 0, gdim=2)
 gmsh.finalize()
 
 # +
 n = ufl.FacetNormal(mesh)
 
-p = 2
+p = 4
 
 # Definition of function space
 element = ufl.FiniteElement("Lagrange", ufl.triangle, p)
