@@ -143,9 +143,9 @@ u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 ds = ufl.Measure("ds", domain=mesh)
 dx = ufl.Measure("dx", domain=mesh)
-a = ufl.inner(ufl.grad(u), ufl.grad(v)) * dx \
-    - k**2 * ufl.inner(u, v) * dx \
-    + 1j * k * ufl.inner(u, v) * ds
+a = -ufl.inner(ufl.grad(u), ufl.grad(v)) * dx \
+    + k**2 * ufl.inner(u, v) * dx \
+    - 1j * k * ufl.inner(u, v) * ds
 L = ufl.inner(g, v) * ds
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
