@@ -179,12 +179,12 @@ def solve_stokes(element, domain):
 # TODO: some text here
 # -
 
-def compute_errors(element):
+def compute_errors(element, nmeshes=5):
     N0 = 10
     hs = []
     velocity_errors = []
     pressure_errors = []
-    for k in range(5):
+    for k in range(nmeshes):
         N = N0 * 2 ** k
         hs.append(1./N)
         domain = mesh.create_rectangle(
@@ -204,8 +204,8 @@ def compute_errors(element):
 # +
 # %matplotlib inline
 
-def error_plot(element, convergence=None):
-    hs, v_errors, p_errors = compute_errors(element)
+def error_plot(element, convergence=None, nmeshes=5):
+    hs, v_errors, p_errors = compute_errors(element, nmeshes)
 
     legend = []
     if convergence is not None:
@@ -313,7 +313,7 @@ element = ufl.MixedElement(
         ufl.FiniteElement("Bubble", "triangle", 4))),
     ufl.FiniteElement("DG", "triangle", 2))
 
-error_plot(element, 3)
+error_plot(element, 3, 3)
 # -
 
 # This last example is converging with the wrong order... (Crouzeix, Falk, 1988)
@@ -342,7 +342,7 @@ element = ufl.MixedElement(
     ufl.VectorElement(crouzeix_falk),
     ufl.FiniteElement("DG", "triangle", 2))
 
-error_plot(element, 3)
+error_plot(element, 3, 3)
 # -
 
 # ## References
