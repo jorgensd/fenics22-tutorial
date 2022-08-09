@@ -45,6 +45,9 @@ import numpy as np
 k0 = 10 * np.pi
 lmbda = 2 * np.pi / k0
 
+degree = 4
+geom_order = 2
+
 # + [markdown] slideshow={"slide_type": "skip"} tags=[]
 # This code is only meant to be executed with complex-valued degrees of freedom. To be able to solve such problems, we use the complex build of PETSc.
 
@@ -77,7 +80,7 @@ except ModuleNotFoundError:
 import gmsh
 from mesh_generation import generate_mesh
 gmsh.initialize()
-model = generate_mesh(lmbda, order=2)
+model = generate_mesh(lmbda, order=geom_order)
 mesh, cell_tags, _ = gmshio.model_to_mesh(model, MPI.COMM_WORLD, 0,
                                           gdim=2)
 gmsh.finalize()
@@ -137,7 +140,7 @@ g = ufl.dot(ufl.grad(ui), n) + 1j * k * ui
 # $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx - j\int_{\partial \Omega} ku  \bar{v} ~ ds = \int_{\partial \Omega} g \, \bar{v}~ ds \qquad \forall v \in \widehat{V}. $$
 # -
 
-element = ufl.FiniteElement("Lagrange", mesh.ufl_cell(), 4)
+element = ufl.FiniteElement("Lagrange", mesh.ufl_cell(), degree)
 V = FunctionSpace(mesh, element)
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
