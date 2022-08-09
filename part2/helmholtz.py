@@ -77,7 +77,7 @@ except ModuleNotFoundError:
 import gmsh
 from mesh_generation import generate_mesh
 gmsh.initialize()
-model = generate_mesh(lmbda, order=1)
+model = generate_mesh(lmbda, order=2)
 mesh, cell_tags, _ = gmshio.model_to_mesh(model, MPI.COMM_WORLD, 0,
                                           gdim=2)
 gmsh.finalize()
