@@ -14768,7 +14768,7 @@ $$g = \nabla u_i \cdot \mathbf{n} - jku_i$$<p>and $u_i$ is the incoming plane wa
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">gmsh</span>
@@ -14806,13 +14806,25 @@ Info    : [ 40%] Meshing curve 3 (Line)
 Info    : [ 50%] Meshing curve 4 (Line)
 Info    : [ 70%] Meshing curve 5 (Circle)
 Info    : [ 90%] Meshing curve 6 (Circle)
-Info    : Done meshing 1D (Wall 0.000770706s, CPU 0.000983s)
+Info    : Done meshing 1D (Wall 0.000591211s, CPU 0.000787s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
 Info    : [ 40%] Meshing surface 2 (Plane, Frontal-Delaunay)
 Info    : [ 70%] Meshing surface 3 (Plane, Frontal-Delaunay)
-Info    : Done meshing 2D (Wall 0.0176078s, CPU 0.014686s)
+Info    : Done meshing 2D (Wall 0.0130244s, CPU 0.013008s)
 Info    : 507 nodes 1032 elements
+Info    : Meshing order 2 (curvilinear on)...
+Info    : [  0%] Meshing curve 1 order 2
+Info    : [ 20%] Meshing curve 2 order 2
+Info    : [ 30%] Meshing curve 3 order 2
+Info    : [ 40%] Meshing curve 4 order 2
+Info    : [ 50%] Meshing curve 5 order 2
+Info    : [ 60%] Meshing curve 6 order 2
+Info    : [ 70%] Meshing surface 1 order 2
+Info    : [ 80%] Meshing surface 2 order 2
+Info    : [ 90%] Meshing surface 3 order 2
+Info    : Surface mesh: worst distortion = 0.547665 (0 elements in ]0, 0.2]); worst gamma = 0.798131
+Info    : Done meshing order 2 (Wall 0.00283132s, CPU 0.003115s)
 Info    : Optimizing mesh (HighOrder)...
 Info    : Optimizing high-order mesh...
 Info    : Optimizing mesh...
@@ -14827,21 +14839,9 @@ Info    : Merging primary patches into 0 patches...
 Info    : Computing boundaries for 0 patches...
 Info    : Generated 0 patches
 Info    : Optimization succeeded
-Info    : Done optimizing mesh (0.001647 s)
-Info    : Done optimizing high-order mesh (0.001647 s)
-Info    : Done optimizing mesh (Wall 0.00155869s, CPU 0.001791s)
-</pre>
-</div>
-</div>
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>Warning : Applying high-order mesh optimizer to mesh with linear elements
+Info    : Done optimizing mesh (0.001528 s)
+Info    : Done optimizing high-order mesh (0.001528 s)
+Info    : Done optimizing mesh (Wall 0.00157201s, CPU 0.001733s)
 </pre>
 </div>
 </div>
