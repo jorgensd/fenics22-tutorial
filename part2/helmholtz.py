@@ -13,9 +13,22 @@
 #     name: python3-complex
 # ---
 
-# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# + [markdown] slideshow={"slide_type": "slide"} tags=[] jp-MarkdownHeadingCollapsed=true
 # # The Helmholtz equation
-# $$ \Delta u + k^2 u = f $$
+#
+# In this tutorial we solve the Helmholtz equation subject to a first order absorbing boundary condition:
+#
+# $$
+# \begin{align*}
+# \Delta u + k^2 u &= 0 \qquad \text{in } \Omega,\\
+# \nabla u \cdot \mathbf{n} - jku &= g \qquad \text{on } \partial\Omega.
+# \end{align*}
+# $$ 
+# where g is the boundary source term computed as:
+#
+# $$g = \nabla u_i \cdot \mathbf{n} - jku_i$$
+#
+# and $u_i$ is the incoming plane wave. 
 # + slideshow={"slide_type": "slide"} tags=[]
 from mpi4py import MPI
 import ufl
@@ -64,7 +77,7 @@ except ModuleNotFoundError:
 import gmsh
 from mesh_generation import generate_mesh
 gmsh.initialize()
-model = generate_mesh(lmbda, order=2)
+model = generate_mesh(lmbda, order=1)
 mesh, cell_tags, _ = gmshio.model_to_mesh(model, MPI.COMM_WORLD, 0,
                                           gdim=2)
 gmsh.finalize()
@@ -82,13 +95,36 @@ k = Function(DG)
 k.x.array[:] = k0
 k.x.array[cell_tags.find(1)] = 2*k0
 
+# +
+import pyvista
+import matplotlib.pyplot as plt
+pyvista.set_jupyter_backend("pythreejs")
+
+# pyvista.start_xvfb(0.5) # Start virtual framebuffer for plotting
+
+topology, cells, geometry = plot.create_vtk_mesh(mesh, 2)
+grid = pyvista.UnstructuredGrid(topology, cells, geometry)
+grid.cell_data["Marker"] = k.x.array.real
+grid2 = grid.tessellate()
+grid2.set_active_scalars("Marker")
+plotter = pyvista.Plotter()
+renderer = plotter.add_mesh(grid2, show_edges=False)
+renderer2 = plotter.add_mesh(grid, style="wireframe")#show_edges=True)
+plotter.view_xy()
+
+plotter.show()
+# img = plotter.screenshot("domains.png", transparent_background=True, window_size=(1000,1000))
+# plt.axis("off")
+# plt.gcf().set_size_inches(15,15)
+# fig = plt.imshow(img)
+
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# Next, we define the Robin boundary condition, by using `ufl.SpatialCoordinate`. When using this function, all expressions using this expression will be evaluated at quadrature points.
+# Next, we define the boundary source term, by using `ufl.SpatialCoordinate`. When using this function, all expressions using this expression will be evaluated at quadrature points.
 # -
 
 n = ufl.FacetNormal(mesh)
 x = ufl.SpatialCoordinate(mesh)
-ui = ufl.exp(1.0j * k * x[0])
+ui = ufl.exp(-1j * k * x[0])
 g = ufl.dot(ufl.grad(ui), n) + 1j * k * ui
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
@@ -98,7 +134,7 @@ g = ufl.dot(ufl.grad(ui), n) + 1j * k * ui
 # Next, we can define the variational problem, using a 4th order Lagrange space. Note that as we are using complex valued functions, we have to use the appropriate inner product, see [DOLFINx tutorial: Complex numbers](https://jorgensd.github.io/dolfinx-tutorial/chapter1/complex_mode.html) for more information.
 #
 #
-# $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx + \int_{\partial \Omega / \Gamma_D} \left(\nabla u \cdot \mathbf{n} \right) \bar{v} ~ ds = \int_\Omega f \, \bar{v}~ dx \qquad \forall v \in \widehat{V}. $$
+# $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx - j\int_{\partial \Omega} ku  \bar{v} ~ ds = \int_{\partial \Omega} g \, \bar{v}~ ds \qquad \forall v \in \widehat{V}. $$
 # -
 
 element = ufl.FiniteElement("Lagrange", mesh.ufl_cell(), 4)
@@ -167,10 +203,6 @@ img = plotter_im.screenshot("Im_u.png",
 plt.axis("off")
 plt.gcf().set_size_inches(15,15)
 fig = plt.imshow(img)
-# -
-
-
-
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Saving higher order functions
 
@@ -181,8 +213,5 @@ with XDMFFile(MPI.COMM_WORLD, "out.xdmf", "w") as file:
     file.write_function(uh)
 
 # VTX can write higher order function
-with VTXWriter(MPI.COMM_WORLD, "out_high_order.bp", uh) as f:
+with VTXWriter(MPI.COMM_WORLD, "out_high_order_2.bp", uh) as f:
     f.write(0.0)
-# -
-
-
