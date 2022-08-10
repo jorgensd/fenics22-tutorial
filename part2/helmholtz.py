@@ -213,7 +213,7 @@ from dolfinx.io import XDMFFile, VTXWriter
 # XDMF write the solution as a P1 function
 with XDMFFile(comm, "out.xdmf", "w") as file:
     file.write_mesh(mesh)
-    file.write_function(k)
+    file.write_function(uh)
 
 # VTX can write higher order function
 with VTXWriter(comm, "out_high_order.bp", [uh]) as f:

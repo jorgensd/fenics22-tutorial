@@ -14833,12 +14833,12 @@ Info    : [ 40%] Meshing curve 3 (Line)
 Info    : [ 50%] Meshing curve 4 (Line)
 Info    : [ 70%] Meshing curve 5 (Circle)
 Info    : [ 90%] Meshing curve 6 (Circle)
-Info    : Done meshing 1D (Wall 0.000634244s, CPU 0.000666s)
+Info    : Done meshing 1D (Wall 0.000533473s, CPU 0.000602s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
 Info    : [ 40%] Meshing surface 2 (Plane, Frontal-Delaunay)
 Info    : [ 70%] Meshing surface 3 (Plane, Frontal-Delaunay)
-Info    : Done meshing 2D (Wall 0.012552s, CPU 0.012835s)
+Info    : Done meshing 2D (Wall 0.0132847s, CPU 0.013251s)
 Info    : 507 nodes 1032 elements
 Info    : Meshing order 2 (curvilinear on)...
 Info    : [  0%] Meshing curve 1 order 2
@@ -14851,7 +14851,7 @@ Info    : [ 70%] Meshing surface 1 order 2
 Info    : [ 80%] Meshing surface 2 order 2
 Info    : [ 90%] Meshing surface 3 order 2
 Info    : Surface mesh: worst distortion = 0.547665 (0 elements in ]0, 0.2]); worst gamma = 0.798131
-Info    : Done meshing order 2 (Wall 0.00280306s, CPU 0.002992s)
+Info    : Done meshing order 2 (Wall 0.00291449s, CPU 0.003124s)
 Info    : Optimizing mesh (HighOrder)...
 Info    : Optimizing high-order mesh...
 Info    : Optimizing mesh...
@@ -14866,9 +14866,9 @@ Info    : Merging primary patches into 0 patches...
 Info    : Computing boundaries for 0 patches...
 Info    : Generated 0 patches
 Info    : Optimization succeeded
-Info    : Done optimizing mesh (0 s)
-Info    : Done optimizing high-order mesh (0 s)
-Info    : Done optimizing mesh (Wall 0.001104s, CPU 4.1e-05s)
+Info    : Done optimizing mesh (0.001097 s)
+Info    : Done optimizing high-order mesh (0.001097 s)
+Info    : Done optimizing mesh (Wall 0.00114069s, CPU 0.001274s)
 </pre>
 </div>
 </div>
@@ -14976,8 +14976,8 @@ We use the fact that a Discontinuous Galerkin space of order 0 (cell-wise piecew
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>2022-08-10 12:56:35.577 (   0.824s) [        A867D000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
-2022-08-10 12:56:35.580 (   0.826s) [        A867D000]    vtkExtractEdges.cxx:551   INFO| Created 5712 edges
+<pre>2022-08-10 13:29:37.890 (   0.824s) [        5DF0A000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
+2022-08-10 13:29:37.892 (   0.826s) [        5DF0A000]    vtkExtractEdges.cxx:551   INFO| Created 5712 edges
 </pre>
 </div>
 </div>
@@ -15209,7 +15209,7 @@ jp-needs-light-background
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_function</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="s2">&quot;Im(u)&quot;</span><span class="p">)</span>
@@ -15267,7 +15267,7 @@ jp-needs-light-background
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">XDMFFile</span><span class="p">,</span> <span class="n">VTXWriter</span>
@@ -15275,7 +15275,7 @@ jp-needs-light-background
 <span class="c1"># XDMF write the solution as a P1 function</span>
 <span class="k">with</span> <span class="n">XDMFFile</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&quot;out.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
     <span class="n">file</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-    <span class="n">file</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
 
 <span class="c1"># VTX can write higher order function</span>
 <span class="k">with</span> <span class="n">VTXWriter</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&quot;out_high_order.bp&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">uh</span><span class="p">])</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
