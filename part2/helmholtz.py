@@ -195,8 +195,8 @@ def plot_function(grid, name):
     plt.axis("off")
     plt.gcf().set_size_inches(10,10)
     fig = plt.imshow(img)
-    
-    
+
+
 
 # + slideshow={"slide_type": "fragment"} tags=[]
 plot_function(grid, "Re(u)")
