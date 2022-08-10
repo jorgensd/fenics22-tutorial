@@ -147,18 +147,18 @@ g = ufl.dot(ufl.grad(ui), n) + 1j * k * ui
 #
 #
 # $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx - j\int_{\partial \Omega} ku  \bar{v} ~ ds = \int_{\partial \Omega} g \, \bar{v}~ ds \qquad \forall v \in \widehat{V}. $$
-# -
 
+# +
 element = ufl.FiniteElement("Lagrange", mesh.ufl_cell(), degree)
 V = fem.FunctionSpace(mesh, element)
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
-ds = ufl.Measure("ds", domain=mesh)
-dx = ufl.Measure("dx", domain=mesh)
-a = -ufl.inner(ufl.grad(u), ufl.grad(v)) * dx \
-    + k**2 * ufl.inner(u, v) * dx \
-    - 1j * k * ufl.inner(u, v) * ds
-L = ufl.inner(g, v) * ds
+
+
+a = -ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx \
+    + k**2 * ufl.inner(u, v) * ufl.dx \
+    - 1j * k * ufl.inner(u, v) * ufl.ds
+L = ufl.inner(g, v) * ufl.ds
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Linear solver
@@ -174,23 +174,7 @@ uh.name = "u"
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Visualizing the complex solution
-# +
-import pyvista
-import matplotlib.pyplot as plt
-from dolfinx.plot import create_vtk_mesh
-
-pyvista.set_jupyter_backend("pythreejs")
-
-topology, cells, geometry = create_vtk_mesh(V)
-grid = pyvista.UnstructuredGrid(topology, cells, geometry)
-grid.cell_data["Marker"] = k.x.array.real
-plotter.close()
-plotter = pyvista.Plotter()
-renderer = plotter.add_mesh(grid, show_edges=True)
-plotter.view_xy()
-plotter.show()
 # -
-
 topology, cells, geometry = create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 grid.point_data["Re(u)"] = uh.x.array.real
@@ -200,33 +184,26 @@ grid.point_data["Im(u)"] = uh.x.array.imag
 # + slideshow={"slide_type": "skip"} tags=[]
 pyvista.start_xvfb(0.5) # Start virtual framebuffer for plotting
 
-# + slideshow={"slide_type": "skip"} tags=[]
 import matplotlib.pyplot as plt
-
-plotter = pyvista.Plotter()
-grid.set_active_scalars("Re(u)")
-renderer = plotter.add_mesh(grid, show_edges=False)
-img = plotter.screenshot("Re_u.png",
+def plot_function(grid, name):
+    plotter = pyvista.Plotter()
+    grid.set_active_scalars(name)
+    renderer = plotter.add_mesh(grid, show_edges=False)
+    img = plotter.screenshot(f"{name}.png",
                          transparent_background=True,
                          window_size=(1000,1000))
+    plt.axis("off")
+    plt.gcf().set_size_inches(10,10)
+    fig = plt.imshow(img)
+    
+    
 
 # + slideshow={"slide_type": "fragment"} tags=[]
-plt.axis("off")
-plt.gcf().set_size_inches(10,10)
-fig = plt.imshow(img)
+plot_function(grid, "Re(u)")
 
 # + slideshow={"slide_type": "notes"} tags=[]
-plotter_im = pyvista.Plotter()
-grid.set_active_scalars("Im(u)")
-renderer = plotter_im.add_mesh(grid, show_edges=False)
-img = plotter_im.screenshot("Im_u.png",
-                         transparent_background=True,
-                         window_size=(1000,1000))
+plot_function(grid, "Im(u)")
 
-# + slideshow={"slide_type": "slide"} tags=[]
-plt.axis("off")
-plt.gcf().set_size_inches(10,10)
-fig = plt.imshow(img)
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Saving higher order functions
 
