@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.14.1
+#       jupytext_version: 1.13.8
 #   kernelspec:
 #     display_name: Python 3 (DOLFINx complex)
 #     language: python
@@ -54,11 +54,13 @@ comm = MPI.COMM_WORLD
 
 # wavenumber in free space (air)
 k0 = 10 * np.pi
+
 # Corresponding wavelength
 lmbda = 2 * np.pi / k0
 
 # Polynomial degree
 degree = 4
+
 # Mesh order
 mesh_order = 2
 
@@ -68,6 +70,7 @@ mesh_order = 2
 # + slideshow={"slide_type": "skip"} tags=[]
 import sys
 from petsc4py import PETSc
+
 if not np.issubdtype(PETSc.ScalarType, np.complexfloating):
     print("This tutorial requires complex number support")
     sys.exit(0)
@@ -236,8 +239,11 @@ from dolfinx.io import XDMFFile, VTXWriter
 # XDMF write the solution as a P1 function
 with XDMFFile(comm, "out.xdmf", "w") as file:
     file.write_mesh(mesh)
-    file.write_function(k)
+    file.write_function(uh)
 
 # VTX can write higher order function
 with VTXWriter(comm, "out_high_order.bp", [uh]) as f:
     f.write(0.0)
+# -
+
+

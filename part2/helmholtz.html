@@ -14736,11 +14736,13 @@ $$g = \nabla u_i \cdot \mathbf{n} - jku_i$$<p>and $u_i$ is the incoming plane wa
 
 <span class="c1"># wavenumber in free space (air)</span>
 <span class="n">k0</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
 <span class="c1"># Corresponding wavelength</span>
 <span class="n">lmbda</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">k0</span>
 
 <span class="c1"># Polynomial degree</span>
 <span class="n">degree</span> <span class="o">=</span> <span class="mi">4</span>
+
 <span class="c1"># Mesh order</span>
 <span class="n">mesh_order</span> <span class="o">=</span> <span class="mi">2</span>
 </pre></div>
@@ -14833,12 +14835,12 @@ Info    : [ 40%] Meshing curve 3 (Line)
 Info    : [ 50%] Meshing curve 4 (Line)
 Info    : [ 70%] Meshing curve 5 (Circle)
 Info    : [ 90%] Meshing curve 6 (Circle)
-Info    : Done meshing 1D (Wall 0.000480786s, CPU 0.000753s)
+Info    : Done meshing 1D (Wall 0.0021821s, CPU 0.00166s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
 Info    : [ 40%] Meshing surface 2 (Plane, Frontal-Delaunay)
 Info    : [ 70%] Meshing surface 3 (Plane, Frontal-Delaunay)
-Info    : Done meshing 2D (Wall 0.0133087s, CPU 0.013372s)
+Info    : Done meshing 2D (Wall 0.0404163s, CPU 0.024793s)
 Info    : 507 nodes 1032 elements
 Info    : Meshing order 2 (curvilinear on)...
 Info    : [  0%] Meshing curve 1 order 2
@@ -14851,7 +14853,7 @@ Info    : [ 70%] Meshing surface 1 order 2
 Info    : [ 80%] Meshing surface 2 order 2
 Info    : [ 90%] Meshing surface 3 order 2
 Info    : Surface mesh: worst distortion = 0.547665 (0 elements in ]0, 0.2]); worst gamma = 0.798131
-Info    : Done meshing order 2 (Wall 0.00308021s, CPU 0.003326s)
+Info    : Done meshing order 2 (Wall 0.0069261s, CPU 0.007148s)
 Info    : Optimizing mesh (HighOrder)...
 Info    : Optimizing high-order mesh...
 Info    : Optimizing mesh...
@@ -14866,9 +14868,9 @@ Info    : Merging primary patches into 0 patches...
 Info    : Computing boundaries for 0 patches...
 Info    : Generated 0 patches
 Info    : Optimization succeeded
-Info    : Done optimizing mesh (0.001056 s)
-Info    : Done optimizing high-order mesh (0.001056 s)
-Info    : Done optimizing mesh (Wall 0.00106326s, CPU 0.001203s)
+Info    : Done optimizing mesh (0.002953 s)
+Info    : Done optimizing high-order mesh (0.002953 s)
+Info    : Done optimizing mesh (Wall 0.0369327s, CPU 0.003881s)
 </pre>
 </div>
 </div>
@@ -14976,8 +14978,8 @@ We use the fact that a Discontinuous Galerkin space of order 0 (cell-wise piecew
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>2022-08-10 11:01:38.693 (   0.860s) [        B17B9000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
-2022-08-10 11:01:38.695 (   0.862s) [        B17B9000]    vtkExtractEdges.cxx:551   INFO| Created 5712 edges
+<pre>2022-08-10 12:54:20.130 (   3.890s) [        E6664000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
+2022-08-10 12:54:20.134 (   3.895s) [        E6664000]    vtkExtractEdges.cxx:551   INFO| Created 5712 edges
 </pre>
 </div>
 </div>
@@ -15143,7 +15145,7 @@ $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
@@ -15181,8 +15183,8 @@ $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>2022-08-10 11:43:00.265 (2482.432s) [        B17B9000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
-2022-08-10 11:43:00.277 (2482.444s) [        B17B9000]    vtkExtractEdges.cxx:551   INFO| Created 22704 edges
+<pre>2022-08-10 12:55:12.319 (  56.149s) [        E6664000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
+2022-08-10 12:55:12.334 (  56.164s) [        E6664000]    vtkExtractEdges.cxx:551   INFO| Created 22704 edges
 </pre>
 </div>
 </div>
@@ -15210,7 +15212,7 @@ $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">topology</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">geometry</span> <span class="o">=</span> <span class="n">create_vtk_mesh</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
@@ -15229,7 +15231,7 @@ $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
@@ -15278,7 +15280,7 @@ jp-needs-light-background
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotter_im</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
@@ -15300,7 +15302,7 @@ jp-needs-light-background
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
@@ -15359,7 +15361,7 @@ jp-needs-light-background
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">XDMFFile</span><span class="p">,</span> <span class="n">VTXWriter</span>
@@ -15367,11 +15369,27 @@ jp-needs-light-background
 <span class="c1"># XDMF write the solution as a P1 function</span>
 <span class="k">with</span> <span class="n">XDMFFile</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&quot;out.xdmf&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
     <span class="n">file</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-    <span class="n">file</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">uh</span><span class="p">)</span>
 
 <span class="c1"># VTX can write higher order function</span>
 <span class="k">with</span> <span class="n">VTXWriter</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&quot;out_high_order.bp&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">uh</span><span class="p">])</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
      </div>
