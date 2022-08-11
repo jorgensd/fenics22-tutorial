@@ -6,3 +6,4 @@ root: intro
 chapters:
 - file: part1/example
 - file: part1/heat_eq
+- file: part3-stokes/comparing_elements

@@ -10,8 +10,8 @@ logo: logo.jpeg
 execute:
   execute_notebooks: force
 
-# Set timeout for any example to 20 minutes
-timeout: 1800
+  # Set timeout for any example to 20 minutes
+  timeout: 1800
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
