@@ -65,7 +65,7 @@ plotter.camera.zoom(1.35)
 
 img = plotter.screenshot("fundamentals_mesh.png",
                          transparent_background=True,
-                         window_size=(1000,1000))
+                         window_size=(800,800))
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=["hide-cell"]
 # ## Plot mesh using matplotlib
