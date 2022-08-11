@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.8
+#       jupytext_version: 1.14.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -47,14 +47,17 @@ import pyvista
 topology, cells, geometry = dolfinx.plot.create_vtk_mesh(mesh)
 grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 
+# We add settings for both static and interactive plotting
+
 # + slideshow={"slide_type": "skip"} tags=[]
-pyvista.start_xvfb(0.5) # Start virtual framebuffer for plotting
+pyvista.start_xvfb(0.5)
+pyvista.set_jupyter_backend("pythreejs")
 # -
 
 plotter = pyvista.Plotter()
 renderer = plotter.add_mesh(grid, show_edges=True)
 
-# + slideshow={"slide_type": "skip"} tags=[]
+# + slideshow={"slide_type": "skip"} tags=["hide-cell"]
 # Settings for presentation mode
 plotter.view_xy()
 plotter.camera.zoom(1.35)
@@ -64,13 +67,21 @@ img = plotter.screenshot("fundamentals_mesh.png",
                          transparent_background=True,
                          window_size=(1000,1000))
 
-# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# + [markdown] slideshow={"slide_type": "slide"} tags=["hide-cell"]
 # ## Plot mesh using matplotlib
 # -
 
+# In the hidden cell you can expand the settings to get a static plot using matplotlib. 
+
+# + tags=["hide-cell"]
 import matplotlib.pyplot as plt
 plt.axis("off")
 plt.gcf().set_size_inches(7,7)
 fig = plt.imshow(img)
 
+# + [markdown] slideshow={"slide_type": "skip"} tags=[]
+# ## Interactive plot
+# We can get interactive plots in notebook by calling.
 
+# + slideshow={"slide_type": "skip"} tags=[]
+plotter.show()
