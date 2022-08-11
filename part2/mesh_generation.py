@@ -1,21 +1,27 @@
 from mpi4py import MPI
-import gmsh
+
+try:
+    import gmsh
+except ModuleNotFoundError:
+    print("This demo requires gmsh to be installed")
+    sys.exit(0)
 
 
-def generate_mesh(lmbda, order):
+def generate_mesh(filename: str, lmbda: int , order: int):
     if MPI.COMM_WORLD.rank == 0:
+        gmsh.initialize()
         gmsh.model.add("helmholtz_domain")
 
         # Set the mesh size
-        gmsh.option.setNumber("Mesh.CharacteristicLengthFactor", 2*lmbda)
+        gmsh.option.setNumber("Mesh.CharacteristicLengthFactor", 1.5*lmbda)
 
 
         # Add scatterers
-        c1 = gmsh.model.occ.addCircle(0.0, -1.1*lmbda, 0.0, lmbda/2)
+        c1 = gmsh.model.occ.addCircle(0.0, -1.1*lmbda, 0.0, 0.8*lmbda)
         gmsh.model.occ.addCurveLoop([c1], tag=c1)
         gmsh.model.occ.addPlaneSurface([c1], tag=c1)
 
-        c2 = gmsh.model.occ.addCircle(0.0, 1.1*lmbda, 0.0, lmbda/2)
+        c2 = gmsh.model.occ.addCircle(0.0, 1.1*lmbda, 0.0, 0.8*lmbda)
         gmsh.model.occ.addCurveLoop([c2], tag=c2)
         gmsh.model.occ.addPlaneSurface([c2], tag=c2)
 
@@ -35,5 +41,6 @@ def generate_mesh(lmbda, order):
         gmsh.model.mesh.generate(2)
         gmsh.model.mesh.setOrder(order)
         gmsh.model.mesh.optimize("HighOrder")
-
-        return gmsh.model
+        gmsh.write(filename)
+        
+        gmsh.finalize()
