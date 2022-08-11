@@ -70,6 +70,8 @@ If you want a sub-slide, i.e. navigating downwards with arrows when rendering th
 
 If a cell should be ignored in presentation mode, set it to `Notes`.
 
+## Hiding cells/output
+See https://jupyterbook.org/en/stable/interactive/hiding.htm for more details. The setting is also in advanced tools on the RHS of the Jupyterlab interface
 ### Automatically generate slides
 By adding the following file to the (`jupyter_server_config.py`) `.jupyter` folder on your system. 
 You might need to rename it to `jupyter_notebook_config.py`.
@@ -79,7 +81,7 @@ jupyter server --show-config
 jupyter notebook --show-config
 ```
 
-If you run the code with `dokken92/dolfinx_custom:15072022` or `dolfinx/lab` using for instance:
+If you run the code with `dolfinx/lab:nightly` using for instance:
 ```bash
 docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dokken92/dolfinx_custom:15072022
 ```
