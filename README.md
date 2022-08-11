@@ -86,3 +86,13 @@ If you run the code with `dolfinx/lab:nightly` using for instance:
 docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dokken92/dolfinx_custom:15072022
 ```
 no copying is required.
+
+
+# Render the HTML files directly of Github
+Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
+
+Example:
+- [Example page](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/example.html#/)
+- [Time dependent problem](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/heat_eq.html#/)
+- [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part2/helmholtz.html#/)
+- [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part3-stokes/comparing_elements.html#/)
