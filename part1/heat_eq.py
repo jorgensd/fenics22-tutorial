@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.8
+#       jupytext_version: 1.14.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -14,7 +14,10 @@
 # ---
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# # The heat equation
+# # Solving a time-dependent problem
+
+# + [markdown] tags=[] slideshow={"slide_type": "skip"}
+# Author: Jørgen S. Dokken
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # This notebook will show you how to solve a transient problem using DOLFINx, and highlight differences between `dolfin` and `dolfinx`.
@@ -26,11 +29,12 @@
 # - `dolfinx.fem`: Finite element method functionality
 # - `dolfinx.io`: Input/Output (read/write) functionality
 # - `dolfinx.plot`: Convenience functions for exporting plotting data
+# - `dolfinx.la`: Functions related to linear algebra structures (matrices/vectors)
 
 # + tags=[]
-from dolfinx import mesh, fem, io, plot
+from dolfinx import mesh, fem, io, plot, la
 
-# + [markdown] slideshow={"slide_type": "fragment"} tags=[]
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Creating a distributed computational domain (mesh)
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
@@ -38,10 +42,8 @@ from dolfinx import mesh, fem, io, plot
 # -
 
 from mpi4py import MPI
-length = 10
-width = 3
-Nx = 100
-Ny = 20
+length, width = 10, 3
+Nx, Ny = 100, 20
 domain = mesh.create_rectangle(MPI.COMM_WORLD, 
                                [[0.,0.],[length, width]],
                                [Nx, Ny], 
@@ -52,7 +54,7 @@ domain = mesh.create_rectangle(MPI.COMM_WORLD,
 # We also note that we have to send in a communicator. This is because we want the user to be aware of how the mesh is distributed when running in parallel. 
 # If we would use the communicator `MPI.COMM_SELF`, each process initialized when running the script would have a mesh local to its process.
 
-# + [markdown] slideshow={"slide_type": "subslide"} tags=[]
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Creating a mesh on each process
 
 # + tags=[]
@@ -60,6 +62,31 @@ local_domain =  mesh.create_rectangle(MPI.COMM_SELF,
                                [[0.,0.],[length, width]],
                                [Nx, Ny], 
                                cell_type=mesh.CellType.quadrilateral)
+# + [markdown] slideshow={"slide_type": "skip"} tags=[]
+# We plot the mesh as done in [Solving the Poisson equation](./example).
+
+# + slideshow={"slide_type": "skip"} tags=["remove-cell"]
+import pyvista
+pyvista.start_xvfb(0.5)
+pyvista.set_jupyter_backend("pythreejs")
+grid = pyvista.UnstructuredGrid(*plot.create_vtk_mesh(local_domain))
+plotter = pyvista.Plotter()
+renderer = plotter.add_mesh(grid, show_edges=True)
+plotter.view_xy()
+plotter.camera.zoom(1.8)
+img = plotter.screenshot("beam.png",
+                         transparent_background=True,
+                         window_size=(800,400))
+
+# + tags=["hide-cell", "remove-cell", "remove-input"] slideshow={"slide_type": "fragment"}
+import matplotlib.pyplot as plt
+plt.axis("off")
+plt.gcf().set_size_inches(20,10)
+fig = plt.imshow(img)
+
+# + slideshow={"slide_type": "skip"} tags=["remove-input"]
+plotter.show()
+
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Setting up a variational problem
 
@@ -82,14 +109,13 @@ local_domain =  mesh.create_rectangle(MPI.COMM_SELF,
 # -
 
 from ufl import TestFunction, TrialFunction, dx, grad, inner, system
-from petsc4py import PETSc
 V = fem.FunctionSpace(domain, ("Lagrange", 1))
 u = TrialFunction(V)
 v = TestFunction(V)
 un = fem.Function(V)
-f = fem.Constant(domain, PETSc.ScalarType(0.0))
-mu = fem.Constant(domain, PETSc.ScalarType(0.1))
-dt = fem.Constant(domain, PETSc.ScalarType(0.01))
+f = fem.Constant(domain, 0.0)
+mu = fem.Constant(domain, 0.1)
+dt = fem.Constant(domain, 0.01)
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # The variational form can be written in UFL syntax, as done in old DOLFIN:
@@ -103,7 +129,7 @@ F = inner(u - un, v) * dx + mu * inner(grad(u), grad(v)) * dx \
 # ## Creating Dirichlet boundary conditions
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# To give the user freedom to set boundary conditions on single degrees of freedom, the `dolfinx.fem.dirichletbc` takes in the list of degrees of freedom as input. These can be obtained in many ways, but we supply a few convenience functions, such as `dolfinx.fem.locate_dofs_topological` and `dolfinx.locate_dofs_geometrical`.
+# To give the user freedom to set boundary conditions on single degrees of freedom, the `dolfinx.fem.dirichletbc` takes in the list of degrees of freedom as input. These can be obtained in many ways, but we supply a few convenience functions, such as `dolfinx.fem.locate_dofs_topological` and `dolfinx.fem.locate_dofs_geometrical`.
 # Locating dofs topologically is generally advised, as certain finite elements dofs do not have a geometrical coordinate (Nedelec, RT etc). DOLFINx also has convenicence functions to obtain a list of all boundary facets.
 
 # +
@@ -112,16 +138,14 @@ tdim = domain.topology.dim
 def dirichlet_facets(x):
     return np.isclose(x[0], length)
 
-bc_facets = mesh.locate_entities_boundary(domain, tdim-1, dirichlet_facets)
-print(type(bc_facets))
+bc_facets = mesh.locate_entities_boundary(domain, tdim-1,
+                                          dirichlet_facets)
 
 # + slideshow={"slide_type": "fragment"} tags=[]
 bndry_dofs = fem.locate_dofs_topological(V, tdim-1, bc_facets)
-print(type(bndry_dofs))
 
 
-# -
-
+# + [markdown] slideshow={"slide_type": "fragment"} tags=[]
 # ### Creating a time dependent boundary condition
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
@@ -139,31 +163,48 @@ uD.interpolate(uD_function(t))
 bcs = [fem.dirichletbc(uD, bndry_dofs)]
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## A simple linear solver
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# A simple linear solver were the left hand side (`a`) and right hand side (`L`) is assembled at each time step can be created by using `dolfinx.fem.petsc.LinearSolver`.
+# -
+
+options={"ksp_type":"cg",
+         "pc_type":"hypre",
+         "pc_hypre_type": "boomeramg"}
+problem = fem.petsc.LinearProblem(a, L, bcs=bcs,
+                                 petsc_options=options)
+uh = problem.solve()
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Setting up a time dependent solver
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# For the linear solver, we would like to create the matrix and vector used for the solving at each time step.
-# As the matrix is time-indepentent, we can assemble this once outside the temporal loop.
+# However, as the rhs (matrix) in our problem is time independent, we would like to have more control over the matrix and vector assembly for each time step.
+# We assemble the matrix once outside the temporal loop.
 # -
-a_form = fem.form(a)
-A = fem.petsc.assemble_matrix(a_form, bcs=bcs)
+compiled_a = fem.form(a)
+A = fem.petsc.assemble_matrix(compiled_a, bcs=bcs)
 A.assemble()
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # Next, we can generate the integration kernel for the right hand side, and create the rhs vector `b` that we will assemble into at each time step
 
 # + slideshow={"slide_type": "fragment"} tags=[]
-rhs_form = fem.form(L)
-b = fem.petsc.create_vector(rhs_form)
+compiled_L = fem.form(L)
+b = fem.Function(V)
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# We next create the PETSc KSP solver, and set it to solve it with a direct solver (LU).
+# We next create the PETSc KSP solver, and set it to solve it with an [algebraic multigrid method](https://hypre.readthedocs.io/en/latest/solvers-boomeramg.html).
 
 # + slideshow={"slide_type": "fragment"} tags=[]
+from petsc4py import PETSc
 solver = PETSc.KSP().create(domain.comm)
 solver.setOperators(A)
-solver.setType(PETSc.KSP.Type.PREONLY)
-solver.getPC().setType(PETSc.PC.Type.LU)
+solver.setType(PETSc.KSP.Type.CG)
+pc = solver.getPC()
+pc.setType(PETSc.PC.Type.HYPRE)
+pc.setHYPREType("boomeramg")
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Solving a time dependent problem
@@ -186,18 +227,16 @@ while t < T:
     uD.interpolate(uD_function(t))
     
     # Assemble RHS
-    with b.localForm() as loc:
-        loc.set(0)
-    fem.petsc.assemble_vector(b, rhs_form)
+    b.x.array[:] = 0
+    fem.petsc.assemble_vector(b.vector, compiled_L)
     
     # Apply boundary condition
-    fem.petsc.apply_lifting(b, [a_form], [bcs])
-    b.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES,
-                  mode=PETSc.ScatterMode.REVERSE)
-    fem.petsc.set_bc(b, bcs)
+    fem.petsc.apply_lifting(b.vector, [compiled_a], [bcs])
+    b.x.scatter_reverse(la.ScatterMode.add)
+    fem.petsc.set_bc(b.vector, bcs)
 
     # Solve linear problem
-    solver.solve(b, uh.vector)
+    solver.solve(b.vector, uh.vector)
     uh.x.scatter_forward()
     
     # Update un
@@ -205,7 +244,7 @@ while t < T:
     vtx.write(t)
 vtx.close()
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# # Plotting the solution
+# ## Plotting the solution
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # We plot the solution using [pyvista](https://github.com/pyvista/pyvista), which supports plotting of VTK structures. 
@@ -223,7 +262,7 @@ grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 grid.point_data["uh"] = uh.x.array.real
 
 
-# + slideshow={"slide_type": "skip"} tags=[]
+# + slideshow={"slide_type": "skip"} tags=["hide-cell"]
 pyvista.start_xvfb(0.5) # Start virtual framebuffer for plotting
 sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
             position_x=0.1, position_y=0.8, width=0.8, height=0.1)
@@ -232,18 +271,18 @@ sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
 plotter = pyvista.Plotter()
 renderer = plotter.add_mesh(grid, show_edges=True,
                             scalar_bar_args=sargs)
-
-# + slideshow={"slide_type": "skip"} tags=[]
-# Settings for presentation mode
 plotter.view_xy()
-plotter.camera.zoom(1.3)
-# -
 
-img = plotter.screenshot("uh.png",
-                         transparent_background=True,
-                         window_size=(1000,1000))
+# + tags=["hide-cell"] slideshow={"slide_type": "skip"}
+plotter.camera.zoom(1.8)
+img = plotter.screenshot("uh.png", transparent_background=True,
+                         window_size=(800,400))
 
-# + slideshow={"slide_type": "slide"} tags=[]
+# + tags=[] slideshow={"slide_type": "skip"}
+plotter.camera.zoom(1)
+plotter.show()
+
+# + tags=["remove-cell", "remove-input"]
 import matplotlib.pyplot as plt
 plt.axis("off")
 plt.gcf().set_size_inches(15,15)

@@ -8,7 +8,7 @@ def post_save(model, os_path, contents_manager):
     d, fname = os.path.split(os_path)
     if ".py" in fname:
         return # Ignore python files
-    check_call(['jupyter', 'nbconvert', '--to', "html", fname, "--template", "reveal"], cwd=d)
+    check_call(['jupyter', 'nbconvert', '--to', "html", "--TagRemovePreprocessor.remove_input_tags={\'remove-input\'}", fname, "--template", "reveal"], cwd=d)
 
 c.FileContentsManager.post_save_hook = post_save
 
