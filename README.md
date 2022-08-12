@@ -81,9 +81,9 @@ jupyter server --show-config
 jupyter notebook --show-config
 ```
 
-If you run the code with `dolfinx/lab:nightly` using for instance:
+If you run the code with `dolfinx/lab:v0.5.0` using for instance:
 ```bash
-docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dokken92/dolfinx_custom:15072022
+docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dolfinx/lab:v0.5.0
 ```
 no copying is required.
 

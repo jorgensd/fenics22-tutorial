@@ -7,4 +7,4 @@ chapters:
 - file: part1/example
 - file: part1/heat_eq
 - file: part2/helmholtz
-- file: part3-stokes/comparing_elements
+- file: part3/comparing_elements
