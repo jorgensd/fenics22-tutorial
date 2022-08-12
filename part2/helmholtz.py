@@ -136,7 +136,8 @@ def plot_function(grid, name, show_mesh=False):
         renderer = plotter.add_mesh(grid_mesh, style="wireframe", line_width=0.1, color="k")
         plotter.view_xy()
         plotter.camera.zoom(2)
-
+    
+    plotter.view_xy()
     img = plotter.screenshot(f"{name}.png", transparent_background=True)
     plt.axis("off")
     plt.gcf().set_size_inches(15,15)
@@ -205,15 +206,36 @@ uh.name = "u"
 # + tags=[] slideshow={"slide_type": "skip"}
 topology, cells, geometry = create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cells, geometry)
-grid.point_data["Re(u)"] = uh.x.array.real
-grid.point_data["Im(u)"] = uh.x.array.imag
+grid.point_data["Abs(u)"] = np.abs(uh.x.array)
 
 
 # + tags=["remove-input"]
-plot_function(grid, "Re(u)")
+plot_function(grid, "Abs(u)")
 
-# + slideshow={"slide_type": "slide"} tags=["remove-input"]
-plot_function(grid, "Im(u)")
+# + slideshow={"slide_type": "skip"} tags=["remove-cell"]
+# Open a gif
+plotter = pyvista.Plotter()
+plotter.open_gif("wave.gif")
+
+boring_cmap = plt.cm.get_cmap("coolwarm", 25)
+
+pts = grid.points.copy()
+warped = grid.warp_by_scalar()
+renderer = plotter.add_mesh(warped, show_edges=False, clim=[-2, 2.5],lighting=False, cmap=boring_cmap)
+
+nframe = 27
+for phase in np.linspace(0, 2 * np.pi, nframe + 1)[:nframe]:
+    data = uh.x.array * np.exp(1j*phase)
+    plotter.update_scalars(data.real, render=False)
+    warped = grid.warp_by_scalar(factor=0.1)
+    plotter.update_coordinates(warped.points.copy(), render=False)
+    
+    # Write a frame. This triggers a render.
+    plotter.write_frame()
+plotter.close()
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# <img src="./wave.gif" alt="gif" class="bg-primary mb-1" width="800px">
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ### Post-processing with Paraview
