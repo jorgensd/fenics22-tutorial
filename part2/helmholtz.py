@@ -120,13 +120,23 @@ from dolfinx.plot import create_vtk_mesh
 # Start virtual framebuffer for plotting
 pyvista.start_xvfb(0.5)
 pyvista.set_jupyter_backend("pythreejs")
+pyvista.set_plot_theme("paraview")
+
 sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
             position_x=0.1, position_y=0.8, width=0.8, height=0.1)
 
-def plot_function(grid, name, show_edges=False):
+def plot_function(grid, name, show_mesh=False):
+
     grid.set_active_scalars(name)
     plotter = pyvista.Plotter()
-    renderer = plotter.add_mesh(grid, show_edges=show_edges, scalar_bar_args=sargs)
+    renderer = plotter.add_mesh(grid, show_edges=False, scalar_bar_args=sargs)
+    if show_mesh:
+        V = dolfinx.fem.FunctionSpace(mesh, ("Lagrange", 1))
+        grid_mesh = pyvista.UnstructuredGrid(*create_vtk_mesh(V))
+        renderer = plotter.add_mesh(grid_mesh, style="wireframe", line_width=0.1, color="k")
+        plotter.view_xy()
+        plotter.camera.zoom(2)
+
     img = plotter.screenshot(f"{name}.png", transparent_background=True)
     plt.axis("off")
     plt.gcf().set_size_inches(15,15)
@@ -136,7 +146,8 @@ def plot_function(grid, name, show_edges=False):
 # + tags=["remove-input"]
 grid = pyvista.UnstructuredGrid(*create_vtk_mesh(mesh))
 grid.cell_data["wavenumber"] = k.x.array.real
-plot_function(grid, "wavenumber") 
+plot_function(grid, "wavenumber", show_mesh=True)
+
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Boundary source term
