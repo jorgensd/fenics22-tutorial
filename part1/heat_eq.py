@@ -102,7 +102,7 @@ plotter.show()
 # \mu\frac{\partial u_{n+1}}{\partial n} &=0 \qquad \text{on } \partial\Omega_N
 # \end{align*}
 # $$ 
-# with $u_D = \sin(t)\cos(y)$, $f=0$.
+# with $u_D = y\cos(0.25t)$, $f=0$.
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # We start by defining the function space, the corresponding test and trial functions, as well as material and temporal parameters. We note that we use explicit imports from ufl to create the test and trial functions, to avoid confusion as to where they originate from. DOLFINx and UFL supports both real and complex valued functions. However, to be able to use the PETSc linear algebra backend, which only supports a single floating type at compilation, we need to use appropriate scalar types in our variational form. This ensures that we generate consistent matrices/vectors
@@ -115,7 +115,7 @@ v = TestFunction(V)
 un = fem.Function(V)
 f = fem.Constant(domain, 0.0)
 mu = fem.Constant(domain, 0.1)
-dt = fem.Constant(domain, 0.01)
+dt = fem.Constant(domain, 0.05)
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # The variational form can be written in UFL syntax, as done in old DOLFIN:
@@ -153,7 +153,7 @@ bndry_dofs = fem.locate_dofs_topological(V, tdim-1, bc_facets)
 
 # +
 def uD_function(t):
-    return lambda x: np.sin(t) * np.cos(x[1])
+    return lambda x: x[1]*np.cos(0.25*t)
 
 uD = fem.Function(V)
 t = 0
@@ -207,6 +207,38 @@ pc.setType(PETSc.PC.Type.HYPRE)
 pc.setHYPREType("boomeramg")
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## Plotting a time dependent problem
+#
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# As we are solving a time dependent problem, we would like to create a time dependent animation of the solution. 
+# We do this by using [pyvista](https://docs.pyvista.org/), which uses VTK structures for plotting.
+# In DOLFINx, we have the convenience function `dolfinx.plot.create_vtk_mesh` that can create meshes compatible with VTK formatting, based on meshes or (discontinuous) Lagrange function spaces.
+
+# + tags=["hide-cell"]
+import pyvista
+import matplotlib.pyplot as plt
+pyvista.start_xvfb(0.5) # Start virtual framebuffer for plotting
+plotter = pyvista.Plotter()
+plotter.open_gif("u_time.gif")
+
+# + slideshow={"slide_type": "fragment"} tags=[]
+topology, cells, geometry = plot.create_vtk_mesh(V)
+uh = fem.Function(V)
+grid = pyvista.UnstructuredGrid(topology, cells, geometry)
+grid.point_data["uh"] = uh.x.array
+
+# + slideshow={"slide_type": "fragment"} tags=[]
+viridis = plt.cm.get_cmap("viridis", 25)
+sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
+            position_x=0.1, position_y=0.8, width=0.8, height=0.1)
+renderer = plotter.add_mesh(grid, show_edges=True, lighting=False, 
+                            cmap=viridis, scalar_bar_args=sargs,
+                            clim=[0,3])
+plotter.view_xy()
+plotter.camera.zoom(1.3)
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Solving a time dependent problem
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
@@ -219,8 +251,6 @@ pc.setHYPREType("boomeramg")
 # -
 
 T = np.pi
-uh = fem.Function(V)
-vtx = io.VTXWriter(domain.comm, "uh.bp", [uh])
 while t < T:
     # Update boundary condition
     t += dt.value
@@ -241,49 +271,12 @@ while t < T:
     
     # Update un
     un.x.array[:] = uh.x.array
-    vtx.write(t)
-vtx.close()
+    
+    # Update plotter
+    plotter.update_scalars(uh.x.array, render=False)
+    plotter.write_frame()
+# + slideshow={"slide_type": "skip"} tags=[]
+plotter.close()
+
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# ## Plotting the solution
-
-# + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# We plot the solution using [pyvista](https://github.com/pyvista/pyvista), which supports plotting of VTK structures. 
-# We create a VTK grid for plotting the solution by using `dolfinx.plot.create_vtk_mesh`, and sending in the function space `V`. The function space has to be continuous or discontinuous Lagrange space.
-# -
-
-import pyvista
-topology, cells, geometry = plot.create_vtk_mesh(V)
-grid = pyvista.UnstructuredGrid(topology, cells, geometry)
-
-# + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# We can attach the data from the degrees of freedom to the mesh
-# -
-
-grid.point_data["uh"] = uh.x.array.real
-
-
-# + slideshow={"slide_type": "skip"} tags=["hide-cell"]
-pyvista.start_xvfb(0.5) # Start virtual framebuffer for plotting
-sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
-            position_x=0.1, position_y=0.8, width=0.8, height=0.1)
-
-# + slideshow={"slide_type": "fragment"} tags=[]
-plotter = pyvista.Plotter()
-renderer = plotter.add_mesh(grid, show_edges=True,
-                            scalar_bar_args=sargs)
-plotter.view_xy()
-
-# + tags=["hide-cell"] slideshow={"slide_type": "skip"}
-plotter.camera.zoom(1.8)
-img = plotter.screenshot("uh.png", transparent_background=True,
-                         window_size=(800,400))
-
-# + tags=[] slideshow={"slide_type": "skip"}
-plotter.camera.zoom(1)
-plotter.show()
-
-# + tags=["remove-cell", "remove-input"]
-import matplotlib.pyplot as plt
-plt.axis("off")
-plt.gcf().set_size_inches(15,15)
-fig = plt.imshow(img)
+# <img src="./u_time.gif" alt="gif" class="bg-primary mb-1" width="800px">
