@@ -87,13 +87,6 @@ mesh_order = 2
 #
 # The function `generate_mesh` creates a Gmsh model on rank 0 of `MPI.COMM_WORLD`.The function `generate_mesh` creates a Gmsh model on rank 0 of `MPI.COMM_WORLD`.
 
-# + slideshow={"slide_type": "skip"} tags=[]
-try:
-    import gmsh
-except ModuleNotFoundError:
-    print("This demo requires gmsh to be installed")
-    sys.exit(0)
-
 # + tags=[]
 from dolfinx.io import gmshio
 from mesh_generation import generate_mesh
@@ -108,7 +101,8 @@ mesh, cell_tags, _ = gmshio.read_from_msh(file_name, comm,
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Material parameters
-#
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # In this problem, the wave number in the different parts of the domain depends on cell markers, inputted through `cell_tags`.
 # We use the fact that a Discontinuous Lagrange space of order 0 (cell-wise piecewise constants) has a one-to-one mapping with the cells local to the process.
 
@@ -126,21 +120,22 @@ from dolfinx.plot import create_vtk_mesh
 # Start virtual framebuffer for plotting
 pyvista.start_xvfb(0.5)
 pyvista.set_jupyter_backend("pythreejs")
+sargs = dict(title_font_size=25, label_font_size=20, fmt="%.2e", color="black",
+            position_x=0.1, position_y=0.8, width=0.8, height=0.1)
 
 def plot_function(grid, name, show_edges=False):
     grid.set_active_scalars(name)
     plotter = pyvista.Plotter()
-    renderer = plotter.add_mesh(grid, show_edges=show_edges)
+    renderer = plotter.add_mesh(grid, show_edges=show_edges, scalar_bar_args=sargs)
     img = plotter.screenshot(f"{name}.png", transparent_background=True)
     plt.axis("off")
     plt.gcf().set_size_inches(15,15)
     fig = plt.imshow(img)
 
-topology, cells, geometry = create_vtk_mesh(mesh)
-grid = pyvista.UnstructuredGrid(topology, cells, geometry)
-grid.cell_data["wavenumber"] = k.x.array.real
 
-# + slideshow={"slide_type": "slide"} tags=[]
+# + tags=["remove-input"]
+grid = pyvista.UnstructuredGrid(*create_vtk_mesh(mesh))
+grid.cell_data["wavenumber"] = k.x.array.real
 plot_function(grid, "wavenumber") 
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
@@ -160,10 +155,11 @@ g = ufl.dot(ufl.grad(uinc), n) + 1j * k * uinc
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Variational form
-#
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # Next, we can define the variational problem, using a 4th order Lagrange space. Note that as we are using complex valued functions, we have to use the appropriate inner product, see [DOLFINx tutorial: Complex numbers](https://jorgensd.github.io/dolfinx-tutorial/chapter1/complex_mode.html) for more information.
-#
-#
+# -
+
 # $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}~ dx - j\int_{\partial \Omega} ku  \bar{v} ~ ds = \int_{\partial \Omega} g \, \bar{v}~ ds \qquad \forall v \in \widehat{V}. $$
 
 # + slideshow={"slide_type": "fragment"} tags=[]
@@ -191,45 +187,48 @@ problem = dolfinx.fem.petsc.LinearProblem(a, L, petsc_options=opt)
 uh = problem.solve()
 uh.name = "u"
 
-# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# + [markdown] slideshow={"slide_type": "skip"} tags=[]
 # ## Postprocessing
 #
 # ### Visualising using PyVista
-# + tags=[]
+# + tags=[] slideshow={"slide_type": "skip"}
 topology, cells, geometry = create_vtk_mesh(V)
 grid = pyvista.UnstructuredGrid(topology, cells, geometry)
 grid.point_data["Re(u)"] = uh.x.array.real
 grid.point_data["Im(u)"] = uh.x.array.imag
 
 
-# + slideshow={"slide_type": "slide"} tags=[]
+# + tags=["remove-input"]
 plot_function(grid, "Re(u)")
 
-# + slideshow={"slide_type": "slide"} tags=[]
+# + slideshow={"slide_type": "slide"} tags=["remove-input"]
 plot_function(grid, "Im(u)")
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# ### Saving functions
+# ### Post-processing with Paraview
 
 # + tags=[]
 from dolfinx.io import XDMFFile, VTXWriter
-
 u_abs = dolfinx.fem.Function(V, dtype=np.float64)
 u_abs.x.array[:] = np.abs(uh.x.array)
 
-# XDMF write the solution as a P1 function
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ### XDMFFile
+# -
+
+# XDMF writes data to mesh nodes
 with XDMFFile(comm, "out.xdmf", "w") as file:
     file.write_mesh(mesh)
     file.write_function(u_abs)
 
-# VTX can write higher order function
-with VTXWriter(comm, "out_high_order.bp", [u_abs]) as f:
-    f.write(0.0)
-
-# + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# ### XDMFFile
-# ![xdmf.png](attachment:e4562786-c284-457f-8e1c-52c50c197911.png)
+# <img src="./xdmf.png" alt="xdmf" class="bg-primary mb-1" width="500px">
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=["ignore-output"]
 # ### VTXWriter
-# ![vtx.png](attachment:60f226ff-015e-468e-a2a0-d12b41ad05f9.png)
+# -
+
+# VTX can write higher order functions
+with VTXWriter(comm, "out_high_order.bp", [u_abs]) as f:
+    f.write(0.0)
+
+# <img src="./vtx.png" alt="vtx" class="bg-primary mb-1" width="500px">

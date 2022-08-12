@@ -7,11 +7,12 @@ except ModuleNotFoundError:
     sys.exit(0)
 
 
-def generate_mesh(filename: str, lmbda: int , order: int):
+def generate_mesh(filename: str, lmbda: int , order: int, verbose:bool=False):
     if MPI.COMM_WORLD.rank == 0:
+
         gmsh.initialize()
         gmsh.model.add("helmholtz_domain")
-
+        gmsh.option.setNumber("General.Terminal", verbose)
         # Set the mesh size
         gmsh.option.setNumber("Mesh.CharacteristicLengthFactor", 1.5*lmbda)
 
