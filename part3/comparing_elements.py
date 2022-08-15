@@ -14,18 +14,22 @@
 # ---
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
-# # Elements for Stokes
+# # Stokes equation
+# -
+
+# Authors: J.S. Dokken, M.W. Scroggs, S. Roggendorf
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# Hello there!
+# In 
 # -
 
 # Import some stuff
 
 # + tags=[]
-from dolfinx import cpp, fem, mesh
-
-import ufl
+from dolfinx import fem, mesh
+from ufl import (VectorElement, EnrichedElement, FiniteElement,
+                 SpatialCoordinate, TrialFunction, TestFunction,
+                 as_vector, cos, sin, inner, div, grad, dx, pi)
 import numpy as np
 from petsc4py import PETSc
 from mpi4py import MPI
@@ -43,19 +47,24 @@ import matplotlib.pylab as plt
 
 # +
 def u_ex(x):
-    sinx = ufl.sin(ufl.pi * x[0]) 
-    siny = ufl.sin(ufl.pi * x[1])
-    cosx = ufl.cos(ufl.pi * x[0])
-    cosy = ufl.cos(ufl.pi * x[1])
-    return 2*ufl.pi *sinx * siny * ufl.as_vector((cosy * sinx, - cosx * siny))
+    sinx = sin(pi * x[0]) 
+    siny = sin(pi * x[1])
+    cosx = cos(pi * x[0])
+    cosy = cos(pi * x[1])
+    c_factor = 2 * pi * sinx * siny
+    return c_factor * as_vector((cosy * sinx, - cosx * siny))
 
 def p_ex(x):
-    return ufl.sin(2*ufl.pi*x[0]) * ufl.sin(2*ufl.pi*x[1])
+    return sin(2 * pi * x[0]) * sin(2 * pi * x[1])
 
 def source(x):
     u, p = u_ex(x), p_ex(x)
-    return - ufl.div(ufl.grad(u)) + ufl.grad(p)
+    return - div(grad(u)) + grad(p)
 
+def assemble_scalar(J, comm: MPI.Comm):
+    scalar_form = fem.form(J)
+    local_J = fem.assemble_scalar(scalar_form)
+    return comm.allreduce(local_J, op=MPI.SUM)
 
 
 def solve_stokes(u_element, p_element, domain):
@@ -71,36 +80,41 @@ def solve_stokes(u_element, p_element, domain):
     bdry_facets = mesh.exterior_facet_indices(domain.topology)
     dofs = fem.locate_dofs_topological(V, tdim - 1, bdry_facets)
     bcv = fem.dirichletbc(g, dofs)
-
     bcs = [bcv]
 
     # Define variational problem
-    u, p = ufl.TrialFunction(V), ufl.TrialFunction(Q)
-    v, q = ufl.TestFunction(V), ufl.TestFunction(Q)
-    x = ufl.SpatialCoordinate(domain)
+    u, p = TrialFunction(V), TrialFunction(Q)
+    v, q = TestFunction(V), TestFunction(Q)
+    x = SpatialCoordinate(domain)
     f = source(x)
-    a_matrix = [[ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx, ufl.inner(p, ufl.div(v)) * ufl.dx],
-              [ufl.inner(ufl.div(u), q) * ufl.dx, None]]
-    a = fem.form(a_matrix)
-    L = fem.form([ufl.inner(f, v) * ufl.dx,  ufl.inner(fem.Constant(domain, PETSc.ScalarType(0)), q) * ufl.dx])
+    a_00 = inner(grad(u), grad(v)) * dx
+    a_01 = - inner(p, div(v)) * dx
+    a_10 = - inner(div(u), q) * dx
+    a = fem.form([[a_00, a_01],
+                  [a_10, None]])
+    rhs_form = fem.form([inner(f, v) * dx,
+                  inner(fem.Constant(domain, 0.), q) * dx])
+    lhs_form = fem.form(a)
 
-    # We will use a block-diagonal preconditioner to solve this problem:
-    a_p11 = fem.form(ufl.inner(p, q) * ufl.dx)
-    a_p = [[a[0][0], None],
-           [None, a_p11]]
+
 
     # Assemble LHS matrix and RHS vector
-    A = fem.petsc.assemble_matrix_nest(a, bcs=bcs)
+    A = fem.petsc.assemble_matrix_nest(lhs_form, bcs=bcs)
     A.assemble()
 
     # We create a nested matrix `P` to use as the preconditioner. The
     # top-left block of `P` is shared with the top-left block of `A`. The
     # bottom-right diagonal entry is assembled from the form `a_p11`:
 
+        # We will use a block-diagonal preconditioner to solve this problem:
+    a_p11 = fem.form(inner(p, q) * dx)
+    a_p = [[a[0][0], None],
+           [None, a_p11]]
+    
     P11 = fem.petsc.assemble_matrix(a_p11, [])
     P = PETSc.Mat().createNest([[A.getNestSubMatrix(0, 0), None], [None, P11]])
     P.assemble()
-    b = fem.petsc.assemble_vector_nest(L)
+    b = fem.petsc.assemble_vector_nest(rhs_form)
     fem.petsc.apply_lifting_nest(b, a, bcs=bcs)
 
     # Sum contributions from ghost entries on the owner
@@ -108,11 +122,11 @@ def solve_stokes(u_element, p_element, domain):
         b_sub.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
 
     # Set Dirichlet boundary condition values in the RHS
-    bcs0 = fem.bcs_by_block(fem.extract_function_spaces(L), bcs)
+    bcs0 = fem.bcs_by_block(fem.extract_function_spaces(rhs_form), bcs)
     fem.petsc.set_bc_nest(b, bcs0)
 
     # Create nullspace vector
-    null_vec = fem.petsc.create_vector_nest(L)
+    null_vec = fem.petsc.create_vector_nest(rhs_form)
 
     # Set velocity part to zero and the pressure part to a non-zero constant
     null_vecs = null_vec.getNestSubVecs()
@@ -163,13 +177,11 @@ def solve_stokes(u_element, p_element, domain):
 
     # Error computation
     error_u = u - u_ex(x)
-    H1_u = fem.form(ufl.inner(error_u, error_u) * ufl.dx + ufl.inner(ufl.grad(error_u), ufl.grad(error_u)) * ufl.dx)
-    velocity_error = domain.comm.allreduce(np.sqrt(fem.assemble.assemble_scalar(H1_u)), op = MPI.SUM)
-    error_p = -p - p_ex(x)
-
-    L2_p = fem.form(error_p*error_p*ufl.dx)
-    pressure_error = domain.comm.allreduce(np.sqrt(fem.assemble.assemble_scalar(L2_p)), op = MPI.SUM)
-    print( ksp.getConvergedReason(), velocity_error, pressure_error)
+    H1_u = inner(error_u, error_u) * dx + inner(grad(error_u), grad(error_u)) * dx
+    velocity_error = np.sqrt(assemble_scalar(H1_u, domain.comm))
+    error_p = p - p_ex(x)
+    L2_p = fem.form(error_p * error_p * dx)
+    pressure_error = np.sqrt(assemble_scalar(L2_p, domain.comm))
     return velocity_error, pressure_error
 
 
@@ -177,26 +189,19 @@ def solve_stokes(u_element, p_element, domain):
 # TODO: some text here
 # -
 
-def compute_errors(element_u, element_p, nmeshes=5):
-    N0 = 10
+def compute_errors(element_u, element_p, refinments=5):
+    N0 = 7
     hs = np.zeros(nmeshes)
     u_errors = np.zeros(nmeshes)
     p_errors = np.zeros(nmeshes)
-    for i in range(nmeshes):
+    comm = MPI.COMM_WORLD
+    for i in range(refinements):
         # This works
-        # domain = mesh.create_rectangle(
-        #    MPI.COMM_WORLD, [np.array([0, 0]), np.array([1, 1])],
-        #    [N0*2**i, N0*2**i], mesh.CellType.triangle, mesh.GhostMode.none)
-        # This doesn't work
-        domain = mesh.create_rectangle(
-            MPI.COMM_WORLD, [np.array([0, 0]), np.array([1, 1])],
-            [N0, N0], mesh.CellType.triangle, mesh.GhostMode.none)
-        for j in range(i):
-            domain.topology.create_entities(1)
-            domain = mesh.refine(domain)
+        N = N0 * 2**i
+        domain = mesh.create_unit_square(comm, N, N, 
+                                         cell_type=mesh.CellType.triangle)
         u_errors[i] , p_errors[i] = solve_stokes(element_u, element_p, domain)
-        num_local_cells = domain.topology.index_map(domain.topology.dim).size_local
-        hs[i] = np.max(cpp.mesh.h(domain, domain.topology.dim, np.arange(num_local_cells, dtype=np.int32)))
+        hs[i] = 1. / N
     return hs, u_errors, p_errors
 
 
@@ -205,16 +210,14 @@ def compute_errors(element_u, element_p, nmeshes=5):
 
 # + [markdown] tags=[]
 # We now use the Stokes solver we have defined to experiment with a range of element pairs that can be used. First, we define a function that takes an element as input and plots a graph showing the error as $h$ is decreased.
-# +
-# %matplotlib inline
-
+# -
 def error_plot(element_u, element_p, convergence=None, nmeshes=5):
     hs, v_errors, p_errors = compute_errors(element_u, element_p, nmeshes)
 
     legend = []
     if convergence is not None:
-        y_value = 1.2 * v_errors[0]
-        plt.plot([hs[0], hs[-1]], [y_value, y_value * (hs[-1] / hs[0])**convergence], "k--")
+        y_value = v_errors[-1] * 1.4
+        plt.plot([hs[0], hs[-1]], [y_value * (hs[0] / hs[-1])**convergence, y_value], "k--")
         legend.append(f"order {convergence}")
     print(hs, v_errors, p_errors)
     plt.plot(hs, v_errors, "bo-")
@@ -227,27 +230,36 @@ def error_plot(element_u, element_p, convergence=None, nmeshes=5):
     plt.ylabel("Error in energy norm")
     plt.xlabel("$h$")
     plt.xlim(plt.xlim()[::-1])
+    plt.grid(True)
 # + [markdown] tags=[]
 # ## Piecewise constant pressure spaces
 # -
 
-# For our first element, we pair piecewise linear elements with piecewise constants. Using these elements, we do not converge to the solution.
+# For our first element, we pair piecewise linear elements with piecewise constants.
+#
+# <img src='./img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
+#
+# Using these elements, we do not converge to the solution.
 
-element_u = ufl.VectorElement("Lagrange", "triangle", 1)
-element_p = ufl.FiniteElement("DG", "triangle", 0)
+element_u = VectorElement("Lagrange", "triangle", 1)
+element_p = FiniteElement("DG", "triangle", 0)
 error_plot(element_u, element_p)
 
 # One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity (Fortin, 1972).
+#
+# <img src='./img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
 
-element_u = ufl.VectorElement("Lagrange", "triangle", 2)
-element_p = ufl.FiniteElement("DG", "triangle", 0)
+element_u = VectorElement("Lagrange", "triangle", 2)
+element_p = FiniteElement("DG", "triangle", 0)
 error_plot(element_u, element_p, 1)
 
 
 # Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space (Crouziex, Raviart, 1973).
+#
+# <img src='./img/element-Crouzeix-Raviart-triangle-1-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
 
-element_u = ufl.VectorElement("CR", "triangle", 1)
-element_p = ufl.FiniteElement("DG", "triangle", 0)
+element_u = VectorElement("CR", "triangle", 1)
+element_p = FiniteElement("DG", "triangle", 0)
 error_plot(element_u, element_p, 1)
 
 # + [markdown] tags=[]
@@ -255,28 +267,47 @@ error_plot(element_u, element_p, 1)
 # -
 
 # When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle (Crouziex, Falk, 1988).
+#
+# <img src='./img/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' />
 
-element_u = ufl.VectorElement(ufl.FiniteElement("Lagrange", "triangle", 2) + ufl.FiniteElement("Bubble", "triangle", 3))
-element_p = ufl.FiniteElement("DG", "triangle", 1)
+enriched_element = FiniteElement("Lagrange", "triangle", 2) + FiniteElement("Bubble", "triangle", 3)
+element_u = VectorElement(enriched_element)
+element_p = FiniteElement("DG", "triangle", 1)
 error_plot(element_u, element_p, 2)
 
 # ## Piecewise quadratic pressure space
 
-# When using a piecewise quadratic space, we want to use a cubic velocity space. This cubic space must be augmented with quartic bubble functions. We have to define these bubble functions using a custom element, as the basis functions of a degree 3 Lagrange space and a degree 4 bubble space are not linearly independent: the custom element omits one of the bubbles (Crouzeix, Falk, 1988).
+# When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles (Crouzeix, Falk, 1988).
+#
+# <img src='./img/element-bubble-enriched-Lagrange-triangle-3-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' />
+#
+# We have to define this velocity element as a custom element (it cannot be created as an enriched element, as the basis functions of degree 3 Lagrange and degree 4 bubbles are not linearly independent). More examples of how custom elements can be created can be found [in the Basix documentation](https://docs.fenicsproject.org/basix/v0.5.0/python/demo/demo_custom_element.py.html).
 
-# +
-wcoeffs = np.zeros((9, 10))
-pts, wts = basix.make_quadrature(basix.CellType.triangle, 6)
-poly = basix.tabulate_polynomials(basix.PolynomialType.legendre, basix.CellType.triangle, 3, pts)
+# ### Defining the polynomial space
+#
+# When creating a custom element, we must input the coefficients that define a basis of the set of polynomials that our element spans. In this example, we will represent the 9 functions in our space in terms of the 10 orthonormal polynomials of degree $\leqslant3$ on a quadrilateral, so we create a 9 by 10 matrix.
+#
+# A polynomial $f$ on the triangle can be written as
+# $$f(x,y)=\sum_i\left(\int_0^1\int_0^{1-y}f(x, y)q_i(x, y) \,\mathrm{d}x\,\mathrm{d}y\right)q_i(x,y),$$
+# where $q_0$, $q_1$, ... are the orthonormal polynomials. The entries of our coefficient matrix are these integrals.
+
+wcoeffs = np.zeros((12, 15))
+pts, wts = basix.make_quadrature(basix.CellType.triangle, 8)
+poly = basix.tabulate_polynomials(basix.PolynomialType.legendre, basix.CellType.triangle, 4, pts)
 x = pts[:, 0]
 y = pts[:, 1]
-f = x * (1 - x) * y * (1 - y)
 for j, f in enumerate([
-    1, x, y, x**2*y, x*y**2, (1-x-y)**2*y, (1-x-y)*y**2, x**2*(1-x-y), x*(1-x-y)**2
+    1, x, y, x**2*y, x*y**2, (1-x-y)**2*y, (1-x-y)*y**2, x**2*(1-x-y), x*(1-x-y)**2,
+    x*y*(1-x-y), x**2*y*(1-x-y), x*y**2*(1-x-y)
 ]):
-    for i in range(10):
+    for i in range(15):
         wcoeffs[j, i] = sum(f * poly[i, :] * wts)
 
+# ### Interpolation
+#
+# Next, we compute the points and matrices that define how functions can be interpolated into this space. For this element, all the DOFs are point evaluations, so we create lists of these points and (reshaped) identity matrices.
+
+# +
 x = [[], [], [], []]
 x[0].append(np.array([[0.0, 0.0]]))
 x[0].append(np.array([[1.0, 0.0]]))
@@ -284,48 +315,25 @@ x[0].append(np.array([[0.0, 1.0]]))
 x[1].append(np.array([[2 / 3, 1 / 3], [1 / 3, 2 / 3]]))
 x[1].append(np.array([[0.0, 1 / 3], [0.0, 2 / 3]]))
 x[1].append(np.array([[1 / 3, 0.0], [2 / 3, 0.0]]))
-x[2].append(np.zeros((0, 2)))
+x[2].append(np.array([[1 / 4, 1 / 4], [1 / 2, 1 / 4], [1 / 4, 1 / 2]]))
 
 M = [[], [], [], []]
 for _ in range(3):
     M[0].append(np.array([[[[1.]]]]))
 for _ in range(3):
     M[1].append(np.array([[[[1.], [0.]]], [[[0.], [1.]]]]))
-M[2].append(np.zeros((0, 1, 0, 1)))
-
-p3_without_bubble = basix.ufl_wrapper.BasixElement(basix.create_custom_element(
-    basix.CellType.triangle, [], wcoeffs, x, M, 0, basix.MapType.identity, False, 2, 3))
-element_u = ufl.VectorElement(ufl.EnrichedElement(p3_without_bubble,ufl.FiniteElement("Bubble", "triangle", 4)))
-element_p = ufl.FiniteElement("DG", "triangle", 2)
-error_plot(element_u, element_p, 3, 3)
+M[2].append(np.array([[[[1.], [0.], [0.]]], [[[0.], [1.], [0.]]], [[[0.], [0.], [1.]]]]))
 # -
 
-# This last example is converging with the wrong order... (Crouzeix, Falk, 1988)
+# ### Creating the element
+#
+# We now create the element by passing in the information we created above, as well as the cell type, value shape, number of derivatives used by the DOFs, map type, whether the element is discontinuous, the highest degree Lagrange space that is a subspace of the element, and the polynomial degree of the element.
 
-# +
-wcoeffs = np.eye(10)
-
-x = [[], [], [], []]
-for _ in range(3):
-    x[0].append(np.zeros((0, 2)))
-x[1].append(np.array([[1 - i, i] for i in [0.25, 0.5, 0.75]]))
-x[1].append(np.array([[0.0, i] for i in [0.25, 0.5, 0.75]]))
-x[1].append(np.array([[i, 0.0] for i in [0.25, 0.5, 0.75]]))
-x[2].append(np.array([[1 / 3, 1 / 3]]))
-
-M = [[], [], [], []]
-for _ in range(3):
-    M[0].append(np.zeros((0, 1, 0, 1)))
-for _ in range(3):
-    M[1].append(np.array([[[[1.], [0.], [0.]]], [[[0.], [1.], [0.]]], [[[0.], [0.], [1.]]]]))
-M[2].append(np.array([[[[1.]]]]))
-
-crouzeix_falk = basix.ufl_wrapper.BasixElement(basix.create_custom_element(
-    basix.CellType.triangle, [], wcoeffs, x, M, 0, basix.MapType.identity, False, 3, 3))
-element_u = ufl.VectorElement(crouzeix_falk)
-element_p = ufl.FiniteElement("DG", "triangle", 2)
-error_plot(element_u, element_p, 3, 3)
-# -
+p3_plus_bubbles = basix.ufl_wrapper.BasixElement(basix.create_custom_element(
+    basix.CellType.triangle, [], wcoeffs, x, M, 0, basix.MapType.identity, False, 3, 4))
+element_u = VectorElement(p3_plus_bubbles)
+element_p = FiniteElement("DG", "triangle", 2)
+error_plot(element_u, element_p, 3, 4)
 
 # ## References
 #
@@ -333,8 +341,9 @@ error_plot(element_u, element_p, 3, 3)
 #
 # Crouzeix, Michel and Raviart, Pierre-Arnaud. Conforming and nonconforming finite element methods for solving the stationary Stokes equations, *Revue Française d'Automatique, Informatique et Recherche Opérationnelle* 3, 33–75, 1973. [DOI: [10.1051/m2an/197307R300331](https://doi.org/10.1051/m2an/197307R300331)]
 #
-# Fortin, Michel. Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis (PhD thesis), Univ. Paris, 1972. 
-
-
+# Fortin, Michel. Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis (PhD thesis), Univ. Paris, 1972.
+#
+# The images of elements used in this example were taken from DefElement:<br />
+# The DefElement contributors. DefElement: an encyclopedia of finite element definitions, 2022, https://defelement.com [Online; accessed: 15-August-2022].
 
 
