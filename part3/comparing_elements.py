@@ -15,35 +15,56 @@
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # # Stokes equation
-# -
 
+# + [markdown] slideshow={"slide_type": "skip"} tags=[]
 # Authors: J.S. Dokken, M.W. Scroggs, S. Roggendorf
 
-# + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# In 
-# -
+# + [markdown] tags=[]
+# $$\begin{align}
+# -\Delta \mathbf{u} + \nabla p &= \mathbf{f}(x,y) \quad \text{in } \Omega\\
+# \nabla \cdot \mathbf{u} &= 0 \qquad\quad \text{in } \Omega\\
+# \mathbf{u} &= \mathbf{0}\qquad\quad \text{on } \partial\Omega
+# \end{align}
+# $$
+# In this tutorial you will learn how to:
 
-# Import some stuff
+# + [markdown] slideshow={"slide_type": "fragment"} tags=[]
+# - Create manufactured solutions with UFL
+# - Use block-preconditioners
+# - Use custom finite elements
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## Imports
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# We start by importing most of the modules we will use in this tutorial.
 
 # + tags=[]
 from dolfinx import fem, mesh
+
+from mpi4py import MPI
+from petsc4py import PETSc
+
+import basix, basix.ufl_wrapper
+import matplotlib.pylab as plt
+import numpy as np
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# However, we pay special attention to `UFL`, the unified form language package, which is used to represent variational forms.
+# As we will dependend on alot of functions from this package, we 
+# import the components that we will use in this code explicitly
+
+# + slideshow={"slide_type": "fragment"} tags=[]
 from ufl import (VectorElement, EnrichedElement, FiniteElement,
                  SpatialCoordinate, TrialFunction, TestFunction,
                  as_vector, cos, sin, inner, div, grad, dx, pi)
-import numpy as np
-from petsc4py import PETSc
-from mpi4py import MPI
-import basix
-import basix.ufl_wrapper
-
-import matplotlib.pylab as plt
 
 
-# + [markdown] slideshow={"slide_type": "fragment"} tags=[]
-# ## Defining a Stokes solver
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## Defining a manufactured solution
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# TODO: some text here, probably split this code into multiple cells.
+# We will use a known analytical solution to the Stokes equations in this tutorial. We define the exact velocity and pressure as the following:
 
 # +
 def u_ex(x):
@@ -57,9 +78,107 @@ def u_ex(x):
 def p_ex(x):
     return sin(2 * pi * x[0]) * sin(2 * pi * x[1])
 
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# Here the input to each function is the coordinates (x,y) of the problem. These will in turn be defined by using `x = ufl.SpatialCoordinate(domain)`.
+#
+# We use the strong formulation of the PDE to compute the source function $\mathbf{f}$ using UFL operators
+
+# + slideshow={"slide_type": "fragment"} tags=[]
 def source(x):
     u, p = u_ex(x), p_ex(x)
     return - div(grad(u)) + grad(p)
+
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## Defining the variational form
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# We will solve the PDE by creating a set of variational forms, one for each component of the problem
+# -
+
+# $$\begin{align}
+# A w &= b,\\
+# \begin{pmatrix}
+# A_{\mathbf{u},\mathbf{u}} & A_{\mathbf{u},p} \\
+# A_{p,\mathbf{u}} & 0
+# \end{pmatrix}
+# \begin{pmatrix} u\\ p \end{pmatrix}
+# &= \begin{pmatrix}\mathbf{f}\\ 0 \end{pmatrix}
+# \end{align}$$
+
+# + slideshow={"slide_type": "fragment"} tags=[]
+def create_bilinear_form(V, Q):
+    u, p = TrialFunction(V), TrialFunction(Q)
+    v, q = TestFunction(V), TestFunction(Q)
+    a_uu = inner(grad(u), grad(v)) * dx
+    a_up = inner(p, div(v)) * dx
+    a_pu = inner(div(u), q) * dx
+    return fem.form([[a_uu, a_up], [a_pu, None]])
+
+
+# + slideshow={"slide_type": "fragment"} tags=[]
+def create_linear_form(V, Q):
+    v, q = TestFunction(V), TestFunction(Q)
+    domain = V.mesh
+    x = SpatialCoordinate(domain)
+    f = source(x)
+    return fem.form([inner(f, v) * dx,
+                     inner(fem.Constant(domain, 0.), q) * dx])
+
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## Boundary conditions
+# -
+
+def create_velocity_bc(V):
+    domain = V.mesh
+    g = fem.Constant(domain, [0.,0.])
+    tdim = domain.topology.dim
+    domain.topology.create_connectivity(tdim - 1, tdim)
+    bdry_facets = mesh.exterior_facet_indices(domain.topology)
+    dofs = fem.locate_dofs_topological(V, tdim - 1, bdry_facets)
+    return [fem.dirichletbc(g, dofs, V)]
+
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# In the problem description above, we have only added a boundary condition for the velocity.
+# This means that the problem is singular, i.e. the pressure is only determined up to a constant. We therefore create a PETSc nullspace operator for the pressure.
+
+# + slideshow={"slide_type": "fragment"} tags=[]
+def create_nullspace(lhs_form, rhs_form):
+    null_vec = fem.petsc.create_vector_nest(rhs_form)
+    null_vecs = null_vec.getNestSubVecs()
+    null_vecs[0].set(0.0)
+    null_vecs[1].set(1.0)
+    null_vec.normalize()
+    nsp = PETSc.NullSpace().create(vectors=[null_vec])
+    return nsp
+
+
+# + [markdown] slideshow={"slide_type": "slide"} tags=[]
+# ## Create a block preconditioner
+
+# + [markdown] slideshow={"slide_type": "notes"} tags=[]
+# We create a nested matrix `P` to use as the preconditioner.
+# The top-left block of `P` is the top-left block of `A`. 
+# The bottom-right diagonal entry is a mass matrix.
+# -
+
+def create_preconditioner(Q, a_uu):
+    p, q = TrialFunction(Q), TestFunction(Q)
+    a_p11 = fem.form(inner(p, q) * dx)
+    a_p = fem.form([[a_uu, None],
+                    [None, a_p11]])
+    P = fem.petsc.assemble_matrix_nest(a_p)
+    P.assemble()
+    return P
+
+
+
+# +
+
+
 
 def assemble_scalar(J, comm: MPI.Comm):
     scalar_form = fem.form(J)
@@ -70,75 +189,29 @@ def assemble_scalar(J, comm: MPI.Comm):
 def solve_stokes(u_element, p_element, domain):
     V = fem.FunctionSpace(domain, u_element)
     Q = fem.FunctionSpace(domain, p_element)
-
     
-    # Velocity boundary condition
-    g = fem.Function(V)
-    g.x.set(0.0)
-    tdim = domain.topology.dim
-    domain.topology.create_connectivity(tdim - 1, tdim)
-    bdry_facets = mesh.exterior_facet_indices(domain.topology)
-    dofs = fem.locate_dofs_topological(V, tdim - 1, bdry_facets)
-    bcv = fem.dirichletbc(g, dofs)
-    bcs = [bcv]
-
-    # Define variational problem
-    u, p = TrialFunction(V), TrialFunction(Q)
-    v, q = TestFunction(V), TestFunction(Q)
-    x = SpatialCoordinate(domain)
-    f = source(x)
-    a_00 = inner(grad(u), grad(v)) * dx
-    a_01 = - inner(p, div(v)) * dx
-    a_10 = - inner(div(u), q) * dx
-    a = fem.form([[a_00, a_01],
-                  [a_10, None]])
-    rhs_form = fem.form([inner(f, v) * dx,
-                  inner(fem.Constant(domain, 0.), q) * dx])
-    lhs_form = fem.form(a)
-
-
-
-    # Assemble LHS matrix and RHS vector
+    lhs_form = create_bilinear_form(V, Q)
+    rhs_form = create_linear_form(V, Q)
+    
+    bcs = create_velocity_bc(V)
+    nsp = create_nullspace(lhs_form, rhs_form)
+    
     A = fem.petsc.assemble_matrix_nest(lhs_form, bcs=bcs)
     A.assemble()
-
-    # We create a nested matrix `P` to use as the preconditioner. The
-    # top-left block of `P` is shared with the top-left block of `A`. The
-    # bottom-right diagonal entry is assembled from the form `a_p11`:
-
-        # We will use a block-diagonal preconditioner to solve this problem:
-    a_p11 = fem.form(inner(p, q) * dx)
-    a_p = [[a[0][0], None],
-           [None, a_p11]]
-    
-    P11 = fem.petsc.assemble_matrix(a_p11, [])
-    P = PETSc.Mat().createNest([[A.getNestSubMatrix(0, 0), None], [None, P11]])
-    P.assemble()
-    b = fem.petsc.assemble_vector_nest(rhs_form)
-    fem.petsc.apply_lifting_nest(b, a, bcs=bcs)
-
-    # Sum contributions from ghost entries on the owner
-    for b_sub in b.getNestSubVecs():
-        b_sub.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
-
-    # Set Dirichlet boundary condition values in the RHS
-    bcs0 = fem.bcs_by_block(fem.extract_function_spaces(rhs_form), bcs)
-    fem.petsc.set_bc_nest(b, bcs0)
-
-    # Create nullspace vector
-    null_vec = fem.petsc.create_vector_nest(rhs_form)
-
-    # Set velocity part to zero and the pressure part to a non-zero constant
-    null_vecs = null_vec.getNestSubVecs()
-    null_vecs[0].set(0.0), null_vecs[1].set(1.0)
-
-    # Normalize the vector, create a nullspace object, and attach it to the
-    # matrix
-    null_vec.normalize()
-    nsp = PETSc.NullSpace().create(vectors=[null_vec])
     assert nsp.test(A)
     A.setNullSpace(nsp)
-  
+    
+    P = create_preconditioner(Q, lhs_form[0][0])
+    
+    # Assemble rhs and create boundary conditions
+    b = fem.petsc.assemble_vector_nest(rhs_form)
+    fem.petsc.apply_lifting_nest(b, lhs_form, bcs=bcs)
+    for b_sub in b.getNestSubVecs():
+        b_sub.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
+    bcs0 = fem.bcs_by_block(fem.extract_function_spaces(rhs_form), bcs)
+    fem.petsc.set_bc_nest(b, bcs0)
+    
+    from IPython import embed;embed()
     # Now we create a Krylov Subspace Solver `ksp`. We configure it to use
     # the MINRES method, and a block-diagonal preconditioner using PETSc's
     # additive fieldsplit type preconditioner:
@@ -171,6 +244,7 @@ def solve_stokes(u_element, p_element, domain):
     p = fem.Function(Q)
     w = PETSc.Vec().createNest([u.vector, p.vector])
     ksp.solve(b, w)
+    print( ksp.getConvergedReason())
     assert ksp.getConvergedReason() > 0
     u.x.scatter_forward()
     p.x.scatter_forward()
@@ -179,7 +253,7 @@ def solve_stokes(u_element, p_element, domain):
     error_u = u - u_ex(x)
     H1_u = inner(error_u, error_u) * dx + inner(grad(error_u), grad(error_u)) * dx
     velocity_error = np.sqrt(assemble_scalar(H1_u, domain.comm))
-    error_p = p - p_ex(x)
+    error_p = -p - p_ex(x)
     L2_p = fem.form(error_p * error_p * dx)
     pressure_error = np.sqrt(assemble_scalar(L2_p, domain.comm))
     return velocity_error, pressure_error
@@ -189,14 +263,13 @@ def solve_stokes(u_element, p_element, domain):
 # TODO: some text here
 # -
 
-def compute_errors(element_u, element_p, refinments=5):
+def compute_errors(element_u, element_p, refinements=5):
     N0 = 7
-    hs = np.zeros(nmeshes)
-    u_errors = np.zeros(nmeshes)
-    p_errors = np.zeros(nmeshes)
+    hs = np.zeros(refinements)
+    u_errors = np.zeros(refinements)
+    p_errors = np.zeros(refinements)
     comm = MPI.COMM_WORLD
     for i in range(refinements):
-        # This works
         N = N0 * 2**i
         domain = mesh.create_unit_square(comm, N, N, 
                                          cell_type=mesh.CellType.triangle)
