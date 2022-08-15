@@ -228,7 +228,7 @@ def error_plot(element, convergence=None, nmeshes=5):
 
 # For our first element, we pair piecewise linear elements with piecewise constants.
 #
-# <img src='img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
+# <img src='./img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
 #
 # Using these elements, we do not converge to the solution.
 
@@ -242,7 +242,7 @@ error_plot(element)
 
 # One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity (Fortin, 1972).
 #
-# <img src='img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
+# <img src='./img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
 
 # +
 element = ufl.MixedElement(
@@ -255,7 +255,7 @@ error_plot(element, 1)
 
 # Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space (Crouziex, Raviart, 1973).
 #
-# <img src='img/element-Crouzeix-Raviart-triangle-1-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
+# <img src='./img/element-Crouzeix-Raviart-triangle-1-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' />
 
 # +
 element = ufl.MixedElement(
@@ -270,7 +270,7 @@ error_plot(element, 1)
 
 # When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle (Crouziex, Falk, 1988).
 #
-# <img src='img/element-bubble enriched Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' />
+# <img src='./img/element-bubble enriched Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' />
 
 # +
 element = ufl.MixedElement(
@@ -286,7 +286,7 @@ error_plot(element, 2)
 
 # When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles (Crouzeix, Falk, 1988).
 #
-# <img src='img/element-bubble enriched Lagrange-triangle-3-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' />
+# <img src='./img/element-bubble enriched Lagrange-triangle-3-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' />
 #
 # We have to define this velocity element as a custom element (it cannot be created as an enriched element, as the basis functions of degree 3 Lagrange and degree 4 bubbles are not linearly independent). More examples of how custom elements can be created can be found [in the Basix documentation](https://docs.fenicsproject.org/basix/v0.5.0/python/demo/demo_custom_element.py.html).
 

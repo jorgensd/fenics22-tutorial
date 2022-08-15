@@ -14830,30 +14830,30 @@ div.jp-OutputPrompt {
     <span class="k">assert</span> <span class="n">nsp</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
     <span class="n">A</span><span class="o">.</span><span class="n">setNullSpace</span><span class="p">(</span><span class="n">nsp</span><span class="p">)</span>
     <span class="c1"># Now we create a Krylov Subspace Solver `ksp`. We configure it to use</span>
-    <span class="c1"># the MINRES method, and a block-diagonal preconditioner using PETSc&#39;s</span>
+    <span class="c1"># the MINRES method, and a block-diagonal preconditioner using PETSc's</span>
     <span class="c1"># additive fieldsplit type preconditioner:</span>
 
     <span class="c1"># +</span>
     <span class="n">ksp</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
-    <span class="n">ksp</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;minres&quot;</span><span class="p">)</span>
+    <span class="n">ksp</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">"minres"</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setTolerances</span><span class="p">(</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
-    <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;fieldsplit&quot;</span><span class="p">)</span>
+    <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">"fieldsplit"</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setFieldSplitType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">CompositeType</span><span class="o">.</span><span class="n">ADDITIVE</span><span class="p">)</span>
 
     <span class="c1"># Define the matrix blocks in the preconditioner with the velocity and</span>
     <span class="c1"># pressure matrix index sets</span>
     <span class="n">nested_IS</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">getNestISs</span><span class="p">()</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setFieldSplitIS</span><span class="p">(</span>
-        <span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
-        <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="p">(</span><span class="s2">"u"</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="c1"># Set the preconditioners for each block</span>
     <span class="n">ksp_u</span><span class="p">,</span> <span class="n">ksp_p</span> <span class="o">=</span> <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">getFieldSplitSubKSP</span><span class="p">()</span>
-    <span class="n">ksp_u</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;preonly&quot;</span><span class="p">)</span>
-    <span class="n">ksp_u</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;gamg&quot;</span><span class="p">)</span>
-    <span class="n">ksp_p</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;preonly&quot;</span><span class="p">)</span>
-    <span class="n">ksp_p</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;jacobi&quot;</span><span class="p">)</span>
+    <span class="n">ksp_u</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">"preonly"</span><span class="p">)</span>
+    <span class="n">ksp_u</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">"gamg"</span><span class="p">)</span>
+    <span class="n">ksp_p</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">"preonly"</span><span class="p">)</span>
+    <span class="n">ksp_p</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">"jacobi"</span><span class="p">)</span>
 
     <span class="c1"># Monitor the convergence of the KSP</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setFromOptions</span><span class="p">()</span>
@@ -14967,17 +14967,17 @@ div.jp-OutputPrompt {
     <span class="n">legend</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">convergence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">y_value</span> <span class="o">=</span> <span class="n">v_errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.4</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="n">convergence</span><span class="p">,</span> <span class="n">y_value</span><span class="p">],</span> <span class="s2">&quot;k--&quot;</span><span class="p">)</span>
-        <span class="n">legend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order </span><span class="si">{</span><span class="n">convergence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">v_errors</span><span class="p">,</span> <span class="s2">&quot;bo-&quot;</span><span class="p">)</span>
-    <span class="c1"># plt.plot(hs, p_errors, &quot;ro-&quot;)</span>
-    <span class="n">legend</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;velocity&quot;</span><span class="p">,</span> <span class="s2">&quot;pressure&quot;</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="n">convergence</span><span class="p">,</span> <span class="n">y_value</span><span class="p">],</span> <span class="s2">"k--"</span><span class="p">)</span>
+        <span class="n">legend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"order </span><span class="si">{</span><span class="n">convergence</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">v_errors</span><span class="p">,</span> <span class="s2">"bo-"</span><span class="p">)</span>
+    <span class="c1"># plt.plot(hs, p_errors, "ro-")</span>
+    <span class="n">legend</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"velocity"</span><span class="p">,</span> <span class="s2">"pressure"</span><span class="p">]</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error in energy norm&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$h$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Error in energy norm"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"$h$"</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
@@ -15005,7 +15005,7 @@ div.jp-OutputPrompt {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>For our first element, we pair piecewise linear elements with piecewise constants.</p>
-<p><img src='img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' /></p>
+<p><img src='./img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' /></p>
 <p>Using these elements, we do not converge to the solution.</p>
 
 </div>
@@ -15020,8 +15020,8 @@ div.jp-OutputPrompt {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">"Lagrange"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"DG"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
 <span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 </pre></div>
@@ -15069,7 +15069,7 @@ jp-needs-light-background
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity (Fortin, 1972).</p>
-<p><img src='img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' /></p>
+<p><img src='./img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' /></p>
 
 </div>
 </div>
@@ -15083,8 +15083,8 @@ jp-needs-light-background
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">"Lagrange"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"DG"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
 <span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -15132,7 +15132,7 @@ jp-needs-light-background
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space (Crouziex, Raviart, 1973).</p>
-<p><img src='img/element-Crouzeix-Raviart-triangle-1-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' /></p>
+<p><img src='./img/element-Crouzeix-Raviart-triangle-1-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-0-dofs-large.png' style='width:100px' /></p>
 
 </div>
 </div>
@@ -15146,8 +15146,8 @@ jp-needs-light-background
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CR&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">"CR"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"DG"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
 <span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -15206,7 +15206,7 @@ jp-needs-light-background
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle (Crouziex, Falk, 1988).</p>
-<p><img src='img/element-bubble enriched Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /></p>
+<p><img src='./img/element-bubble enriched Lagrange-triangle-2-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-1-dofs-large.png' style='width:100px' /></p>
 
 </div>
 </div>
@@ -15221,9 +15221,9 @@ jp-needs-light-background
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
     <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">EnrichedElement</span><span class="p">(</span>
-        <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-        <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Bubble&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"Lagrange"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"Bubble"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">3</span><span class="p">))),</span>
+    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"DG"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
 <span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
@@ -15282,7 +15282,7 @@ jp-needs-light-background
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles (Crouzeix, Falk, 1988).</p>
-<p><img src='img/element-bubble enriched Lagrange-triangle-3-dofs-large.png' style='width:100px' /><img src='img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /></p>
+<p><img src='./img/element-bubble enriched Lagrange-triangle-3-dofs-large.png' style='width:100px' /><img src='./img/element-Lagrange-triangle-2-dofs-large.png' style='width:100px' /></p>
 <p>We have to define this velocity element as a custom element (it cannot be created as an enriched element, as the basis functions of degree 3 Lagrange and degree 4 bubbles are not linearly independent). More examples of how custom elements can be created can be found <a href="https://docs.fenicsproject.org/basix/v0.5.0/python/demo/demo_custom_element.py.html">in the Basix documentation</a>.</p>
 
 </div>
@@ -15393,7 +15393,7 @@ where $q_0$, $q_1$, ... are the orthonormal polynomials. The entries of our coef
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">p3_plus_bubbles</span> <span class="o">=</span> <span class="n">basix</span><span class="o">.</span><span class="n">ufl_wrapper</span><span class="o">.</span><span class="n">BasixElement</span><span class="p">(</span><span class="n">basix</span><span class="o">.</span><span class="n">create_custom_element</span><span class="p">(</span>
     <span class="n">basix</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">,</span> <span class="p">[],</span> <span class="n">wcoeffs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">basix</span><span class="o">.</span><span class="n">MapType</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="n">p3_plus_bubbles</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="n">p3_plus_bubbles</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"DG"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
 <span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
