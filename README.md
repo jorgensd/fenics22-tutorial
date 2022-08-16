@@ -1,9 +1,16 @@
-# fenics22-tutorial
+# [The FEniCSx Tutorial](https://jorgensd.github.io/fenics22-tutorial/intro.html) [@FEniCS 22](https://fenicsproject.org/fenics-2022/) in San Diego.
 
-Tutorial for the FEniCS [22 conference](https://fenicsproject.org/fenics-2022/) in San Diego
+## Render the HTML files directly of Github
+Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
 
+Example:
+- [Example page](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/example.html#/)
+- [Time dependent problem](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/heat_eq.html#/)
+- [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part2/helmholtz.html#/)
+- [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part3-stokes/comparing_elements.html#/)
 
-## Adding a tutorial to the book
+## Developer notes
+### Adding a tutorial to the book
 
 Add a chapter to `_toc.yml`.
 
@@ -53,7 +60,7 @@ to
 ```
 
 
-## Create slides from your notebook
+### Create slides from your notebook
 
 You can use `nbconvert` (`pip3 install nbconvert`) to convert the `.ipynb` to a presentation.
 The command to run is:
@@ -70,8 +77,9 @@ If you want a sub-slide, i.e. navigating downwards with arrows when rendering th
 
 If a cell should be ignored in presentation mode, set it to `Notes`.
 
-## Hiding cells/output
+### Hiding cells/output
 See https://jupyterbook.org/en/stable/interactive/hiding.htm for more details. The setting is also in advanced tools on the RHS of the Jupyterlab interface
+
 ### Automatically generate slides
 By adding the following file to the (`jupyter_server_config.py`) `.jupyter` folder on your system. 
 You might need to rename it to `jupyter_notebook_config.py`.
@@ -88,11 +96,3 @@ docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dolfinx/
 no copying is required.
 
 
-# Render the HTML files directly of Github
-Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
-
-Example:
-- [Example page](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/example.html#/)
-- [Time dependent problem](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/heat_eq.html#/)
-- [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part2/helmholtz.html#/)
-- [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part3-stokes/comparing_elements.html#/)
