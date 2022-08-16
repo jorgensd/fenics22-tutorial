@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Elements for Stokes &#8212; FEniCS 22 tutorial</title>
+    <title>Stokes equation &#8212; FEniCS 22 tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -134,7 +134,7 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Elements for Stokes
+   Stokes equation
   </a>
  </li>
 </ul>
@@ -361,13 +361,48 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#defining-a-stokes-solver">
-   Defining a Stokes solver
+  <a class="reference internal nav-link" href="#imports">
+   Imports
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-elements">
-   The elements
+  <a class="reference internal nav-link" href="#defining-a-manufactured-solution">
+   Defining a manufactured solution
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#defining-the-variational-form">
+   Defining the variational form
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#boundary-conditions">
+   Boundary conditions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-a-block-preconditioner">
+   Create a block preconditioner
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#assemble-nest-system">
+   Assemble nest system
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#petsc-krylov-subspace-solver">
+   PETSc Krylov Subspace solver
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#compute-error-estimates">
+   Compute error estimates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-stokes-problem-with-a-block-preconditioner">
+   Solving the Stokes problem with a block-preconditioner
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -376,29 +411,46 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space">
-   Piecewise linear pressure space
+  <a class="reference internal nav-link" href="#p2-dg0-fortin-1972">
+   P2-DG0 (Fortin, 1972)
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#piecewise-quadratic-pressure-space">
-   Piecewise quadratic pressure space
+  <a class="reference internal nav-link" href="#crouzeix-raviart">
+   Crouzeix-Raviart
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space-crouziex-falk-1988">
+   Piecewise linear pressure space (Crouziex, Falk, 1988)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#piecewise-quadratic-pressure-space-crouzeix-falk-1988">
+   Piecewise quadratic pressure space (Crouzeix, Falk, 1988)
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#defining-the-polynomial-space">
-     Defining the polynomial space
+    <a class="reference internal nav-link" href="#custom-elements">
+     Custom elements
     </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#interpolation">
-     Interpolation
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#creating-the-element">
-     Creating the element
-    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#defining-the-polynomial-space">
+       Defining the polynomial space
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#interpolation">
+       Interpolation
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#creating-the-element">
+       Creating the element
+      </a>
+     </li>
+    </ul>
    </li>
   </ul>
  </li>
@@ -416,7 +468,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Elements for Stokes</h1>
+                <h1>Stokes equation</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -427,13 +479,48 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#defining-a-stokes-solver">
-   Defining a Stokes solver
+  <a class="reference internal nav-link" href="#imports">
+   Imports
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-elements">
-   The elements
+  <a class="reference internal nav-link" href="#defining-a-manufactured-solution">
+   Defining a manufactured solution
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#defining-the-variational-form">
+   Defining the variational form
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#boundary-conditions">
+   Boundary conditions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-a-block-preconditioner">
+   Create a block preconditioner
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#assemble-nest-system">
+   Assemble nest system
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#petsc-krylov-subspace-solver">
+   PETSc Krylov Subspace solver
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#compute-error-estimates">
+   Compute error estimates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-stokes-problem-with-a-block-preconditioner">
+   Solving the Stokes problem with a block-preconditioner
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -442,29 +529,46 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space">
-   Piecewise linear pressure space
+  <a class="reference internal nav-link" href="#p2-dg0-fortin-1972">
+   P2-DG0 (Fortin, 1972)
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#piecewise-quadratic-pressure-space">
-   Piecewise quadratic pressure space
+  <a class="reference internal nav-link" href="#crouzeix-raviart">
+   Crouzeix-Raviart
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space-crouziex-falk-1988">
+   Piecewise linear pressure space (Crouziex, Falk, 1988)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#piecewise-quadratic-pressure-space-crouzeix-falk-1988">
+   Piecewise quadratic pressure space (Crouzeix, Falk, 1988)
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#defining-the-polynomial-space">
-     Defining the polynomial space
+    <a class="reference internal nav-link" href="#custom-elements">
+     Custom elements
     </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#interpolation">
-     Interpolation
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#creating-the-element">
-     Creating the element
-    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#defining-the-polynomial-space">
+       Defining the polynomial space
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#interpolation">
+       Interpolation
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#creating-the-element">
+       Creating the element
+      </a>
+     </li>
+    </ul>
    </li>
   </ul>
  </li>
@@ -483,132 +587,215 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="elements-for-stokes">
-<h1>Elements for Stokes<a class="headerlink" href="#elements-for-stokes" title="Permalink to this headline">#</a></h1>
-<p>Hello there!</p>
-<p>Import some stuff</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="stokes-equation">
+<h1>Stokes equation<a class="headerlink" href="#stokes-equation" title="Permalink to this headline">#</a></h1>
+<p>Authors: J.S. Dokken, M.W. Scroggs, S. Roggendorf</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+-\Delta \mathbf{u} + \nabla p &amp;= \mathbf{f}(x,y) \quad \text{in } \Omega\\
+\nabla \cdot \mathbf{u} &amp;= 0 \qquad\quad \text{in } \Omega\\
+\mathbf{u} &amp;= \mathbf{0}\qquad\quad \text{on } \partial\Omega
+\end{align}
+\end{split}\]</div>
+<p>In this tutorial you will learn how to:</p>
+<ul class="simple">
+<li><p>Create manufactured solutions with UFL</p></li>
+<li><p>Use block-preconditioners</p></li>
+<li><p>Use custom finite elements</p></li>
+</ul>
+<section id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">#</a></h2>
+<p>We start by importing most of the modules we will use in this tutorial.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">fem</span><span class="p">,</span> <span class="n">mesh</span>
-<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">cpp</span> <span class="k">as</span> <span class="n">_cpp</span>
 
-<span class="kn">import</span> <span class="nn">ufl</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
-<span class="kn">import</span> <span class="nn">basix</span>
-<span class="kn">import</span> <span class="nn">basix.ufl_wrapper</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
 
+<span class="kn">import</span> <span class="nn">basix</span><span class="o">,</span> <span class="nn">basix.ufl_wrapper</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section id="defining-a-stokes-solver">
-<h2>Defining a Stokes solver<a class="headerlink" href="#defining-a-stokes-solver" title="Permalink to this headline">#</a></h2>
-<p>TODO: some text here, probably split this code into multiple cells.</p>
+<p>However, we pay special attention to <code class="docutils literal notranslate"><span class="pre">UFL</span></code>, the unified form language package, which is used to represent variational forms.
+As we will dependend on alot of functions from this package, we
+import the components that we will use in this code explicitly</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="p">(</span><span class="n">VectorElement</span><span class="p">,</span> <span class="n">EnrichedElement</span><span class="p">,</span> <span class="n">FiniteElement</span><span class="p">,</span>
+                 <span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span>
+                 <span class="n">as_vector</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="defining-a-manufactured-solution">
+<h2>Defining a manufactured solution<a class="headerlink" href="#defining-a-manufactured-solution" title="Permalink to this headline">#</a></h2>
+<p>We will use a known analytical solution to the Stokes equations in this tutorial. We define the exact velocity and pressure as the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">u_ex</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">sinx</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+    <span class="n">siny</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">cosx</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">cosy</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">c_factor</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">sinx</span> <span class="o">*</span> <span class="n">siny</span>
+    <span class="k">return</span> <span class="n">c_factor</span> <span class="o">*</span> <span class="n">as_vector</span><span class="p">((</span><span class="n">cosy</span> <span class="o">*</span> <span class="n">sinx</span><span class="p">,</span> <span class="o">-</span> <span class="n">cosx</span> <span class="o">*</span> <span class="n">siny</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">f1</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">f2</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">ufl</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-
-    <span class="k">return</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">f1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">f2</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">solve_stokes</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
-    <span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">sub_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">sub_elements</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
-    <span class="n">u_soln</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">(</span><span class="n">velocity</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-
-    <span class="c1"># Velocity boundary condition</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-    <span class="n">bdry_facets</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span>
-        <span class="n">domain</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool8</span><span class="p">))</span>
-    <span class="n">dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">bdry_facets</span><span class="p">)</span>
-    <span class="n">bcv</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">dofs</span><span class="p">)</span>
-
-    <span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bcv</span><span class="p">]</span>
-
-    <span class="c1"># Define variational problem</span>
-    <span class="n">u</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-    <span class="n">v</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-    <span class="n">f_expr</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">(</span><span class="n">rhs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="n">V</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">f_expr</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">([[</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">],</span>
-              <span class="p">[</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span>
-    <span class="n">L</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">([</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">])</span>
-
-    <span class="c1"># We will use a block-diagonal preconditioner to solve this problem:</span>
-
-    <span class="n">a_p11</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
-    <span class="n">a_p</span> <span class="o">=</span> <span class="p">[[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-           <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">a_p11</span><span class="p">]]</span>
-
-    <span class="c1"># Assemble LHS matrix and RHS vector</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix_nest</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">)</span>
-    <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-
-    <span class="c1"># We create a nested matrix `P` to use as the preconditioner. The</span>
-    <span class="c1"># top-left block of `P` is shared with the top-left block of `A`. The</span>
-    <span class="c1"># bottom-right diagonal entry is assembled from the form `a_p11`:</span>
-
-    <span class="n">P11</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a_p11</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="n">P</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Mat</span><span class="p">()</span><span class="o">.</span><span class="n">createNest</span><span class="p">([[</span><span class="n">A</span><span class="o">.</span><span class="n">getNestSubMatrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">P11</span><span class="p">]])</span>
-    <span class="n">P</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_vector_nest</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-
-    <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">apply_lifting_nest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">)</span>
-    <span class="c1"># Sum contributions from ghost entries on the owner</span>
-    <span class="k">for</span> <span class="n">b_sub</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">getNestSubVecs</span><span class="p">():</span>
-        <span class="n">b_sub</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
-
-    <span class="c1"># Set Dirichlet boundary condition values in the RHS</span>
-    <span class="n">bcs0</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">bcs_by_block</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">extract_function_spaces</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">bcs</span><span class="p">)</span>
-    <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">set_bc_nest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">bcs0</span><span class="p">)</span>
-
-    <span class="c1"># Create nullspace vector</span>
-    <span class="n">null_vec</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_vector_nest</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-
-    <span class="c1"># Set velocity part to zero and the pressure part to a non-zero constant</span>
+<span class="k">def</span> <span class="nf">p_ex</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here the input to each function is the coordinates (x,y) of the problem. These will in turn be defined by using <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">ufl.SpatialCoordinate(domain)</span></code>.</p>
+<p>We use the strong formulation of the PDE to compute the source function <span class="math notranslate nohighlight">\(\mathbf{f}\)</span> using UFL operators</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">u_ex</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">p_ex</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span> <span class="n">div</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">))</span> <span class="o">+</span> <span class="n">grad</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="defining-the-variational-form">
+<h2>Defining the variational form<a class="headerlink" href="#defining-the-variational-form" title="Permalink to this headline">#</a></h2>
+<p>We will solve the PDE by creating a set of variational forms, one for each component of the problem</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+A w &amp;= b,\\
+\begin{pmatrix}
+A_{\mathbf{u},\mathbf{u}} &amp; A_{\mathbf{u},p} \\
+A_{p,\mathbf{u}} &amp; 0
+\end{pmatrix}
+\begin{pmatrix} u\\ p \end{pmatrix}
+&amp;= \begin{pmatrix}\mathbf{f}\\ 0 \end{pmatrix}
+\end{align}\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_bilinear_form</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+    <span class="n">v</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+    <span class="n">a_uu</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="n">a_up</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">div</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="n">a_pu</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">div</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="k">return</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">([[</span><span class="n">a_uu</span><span class="p">,</span> <span class="n">a_up</span><span class="p">],</span> <span class="p">[</span><span class="n">a_pu</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_linear_form</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span>
+    <span class="n">v</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">mesh</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">source</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">([</span><span class="n">inner</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span><span class="p">,</span>
+                     <span class="n">inner</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="boundary-conditions">
+<h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_velocity_bc</span><span class="p">(</span><span class="n">V</span><span class="p">):</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">mesh</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])</span>
+    <span class="n">tdim</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span>
+    <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">tdim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tdim</span><span class="p">)</span>
+    <span class="n">bdry_facets</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">exterior_facet_indices</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
+    <span class="n">dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">tdim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bdry_facets</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">dofs</span><span class="p">,</span> <span class="n">V</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the problem description above, we have only added a boundary condition for the velocity.
+This means that the problem is singular, i.e. the pressure is only determined up to a constant. We therefore create a PETSc nullspace operator for the pressure.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_nullspace</span><span class="p">(</span><span class="n">rhs_form</span><span class="p">):</span>
+    <span class="n">null_vec</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_vector_nest</span><span class="p">(</span><span class="n">rhs_form</span><span class="p">)</span>
     <span class="n">null_vecs</span> <span class="o">=</span> <span class="n">null_vec</span><span class="o">.</span><span class="n">getNestSubVecs</span><span class="p">()</span>
-    <span class="n">null_vecs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">null_vecs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-
-    <span class="c1"># Normalize the vector, create a nullspace object, and attach it to the</span>
-    <span class="c1"># matrix</span>
+    <span class="n">null_vecs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">null_vecs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
     <span class="n">null_vec</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
     <span class="n">nsp</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">NullSpace</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vectors</span><span class="o">=</span><span class="p">[</span><span class="n">null_vec</span><span class="p">])</span>
-    <span class="k">assert</span> <span class="n">nsp</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-    <span class="n">A</span><span class="o">.</span><span class="n">setNullSpace</span><span class="p">(</span><span class="n">nsp</span><span class="p">)</span>
-    <span class="c1"># Now we create a Krylov Subspace Solver `ksp`. We configure it to use</span>
-    <span class="c1"># the MINRES method, and a block-diagonal preconditioner using PETSc&#39;s</span>
-    <span class="c1"># additive fieldsplit type preconditioner:</span>
-
-    <span class="c1"># +</span>
-    <span class="n">ksp</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nsp</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="create-a-block-preconditioner">
+<h2>Create a block preconditioner<a class="headerlink" href="#create-a-block-preconditioner" title="Permalink to this headline">#</a></h2>
+<p>We create a nested matrix <code class="docutils literal notranslate"><span class="pre">P</span></code> to use as the preconditioner.
+The top-left block of <code class="docutils literal notranslate"><span class="pre">P</span></code> is the top-left block of <code class="docutils literal notranslate"><span class="pre">A</span></code>.
+The bottom-right diagonal entry is a mass matrix.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_preconditioner</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="p">):</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">),</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+    <span class="n">a_p11</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span><span class="p">)</span>
+    <span class="n">a_p</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">([[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+                    <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">a_p11</span><span class="p">]])</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix_nest</span><span class="p">(</span><span class="n">a_p</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
+    <span class="n">P</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">P</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="assemble-nest-system">
+<h2>Assemble nest system<a class="headerlink" href="#assemble-nest-system" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">assemble_system</span><span class="p">(</span><span class="n">lhs_form</span><span class="p">,</span> <span class="n">rhs_form</span><span class="p">,</span> <span class="n">bcs</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix_nest</span><span class="p">(</span><span class="n">lhs_form</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+    
+    <span class="n">b</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_vector_nest</span><span class="p">(</span><span class="n">rhs_form</span><span class="p">)</span>
+    <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">apply_lifting_nest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">lhs_form</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">b_sub</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">getNestSubVecs</span><span class="p">():</span>
+        <span class="n">b_sub</span><span class="o">.</span><span class="n">ghostUpdate</span><span class="p">(</span><span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD</span><span class="p">,</span>
+                          <span class="n">mode</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">)</span>
+    <span class="n">spaces</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">extract_function_spaces</span><span class="p">(</span><span class="n">rhs_form</span><span class="p">)</span>
+    <span class="n">bcs0</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">bcs_by_block</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
+    <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">set_bc_nest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">bcs0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span><span class="p">,</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="petsc-krylov-subspace-solver">
+<h2>PETSc Krylov Subspace solver<a class="headerlink" href="#petsc-krylov-subspace-solver" title="Permalink to this headline">#</a></h2>
+<p>In legacy DOLFIN, convenience functions were provided to interact with linear algebra packages such as PETSc.
+In DOLFINx, we instead rely on supplying the users with the appropriate data types for the backend. Then the user can access all of the features of the backend, not being constrained to the layer added in DOLFIN. One can also leverage the detailed documentation of PETSc. For block systems, see: <a class="reference external" href="https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices">https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_block_solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">comm</span><span class="p">):</span>
+    <span class="n">ksp</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">KSP</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;minres&quot;</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setTolerances</span><span class="p">(</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="s2">&quot;fieldsplit&quot;</span><span class="p">)</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setFieldSplitType</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">PC</span><span class="o">.</span><span class="n">CompositeType</span><span class="o">.</span><span class="n">ADDITIVE</span><span class="p">)</span>
 
-    <span class="c1"># Define the matrix blocks in the preconditioner with the velocity and</span>
-    <span class="c1"># pressure matrix index sets</span>
     <span class="n">nested_IS</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">getNestISs</span><span class="p">()</span>
-    <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setFieldSplitIS</span><span class="p">(</span>
-        <span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
-        <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">setFieldSplitIS</span><span class="p">((</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
+                                <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">nested_IS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="c1"># Set the preconditioners for each block</span>
     <span class="n">ksp_u</span><span class="p">,</span> <span class="n">ksp_p</span> <span class="o">=</span> <span class="n">ksp</span><span class="o">.</span><span class="n">getPC</span><span class="p">()</span><span class="o">.</span><span class="n">getFieldSplitSubKSP</span><span class="p">()</span>
@@ -619,71 +806,100 @@ title="Print to PDF"
 
     <span class="c1"># Monitor the convergence of the KSP</span>
     <span class="n">ksp</span><span class="o">.</span><span class="n">setFromOptions</span><span class="p">()</span>
-    <span class="c1"># Compute the solution</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Vec</span><span class="p">()</span><span class="o">.</span><span class="n">createNest</span><span class="p">([</span><span class="n">_cpp</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_vector_wrap</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="n">_cpp</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">create_vector_wrap</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="p">)])</span>
-    <span class="n">ksp</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="n">u</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
-
-    <span class="n">error</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="n">u_soln</span>
-    <span class="n">velocity_error</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span>
-        <span class="n">fem</span><span class="o">.</span><span class="n">assemble</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
-            <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span> <span class="o">+</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">error</span><span class="p">))</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="c1"># fem.form(ufl.inner(error, error) * ufl.dx)) ** 0.5,</span>
-        <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
-    
-    <span class="c1"># TODO</span>
-    <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">random</span>
-    <span class="n">pressure_error</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
-    
-    <span class="k">return</span> <span class="n">velocity_error</span><span class="p">,</span> <span class="n">pressure_error</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>TODO: some text here</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_errors</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">nmeshes</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    <span class="n">N0</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">hs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">velocity_errors</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">pressure_errors</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nmeshes</span><span class="p">):</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">N0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">k</span>
-        <span class="n">hs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">N</span><span class="p">)</span>
-        <span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span>
-            <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])],</span>
-            <span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">GhostMode</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
-        <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span> <span class="o">=</span> <span class="n">solve_stokes</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
-        <span class="n">velocity_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span>
-        <span class="n">pressure_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">hs</span><span class="p">,</span> <span class="n">velocity_errors</span><span class="p">,</span> <span class="n">pressure_errors</span>
+    <span class="k">return</span> <span class="n">ksp</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="the-elements">
-<h2>The elements<a class="headerlink" href="#the-elements" title="Permalink to this headline">#</a></h2>
+<section id="compute-error-estimates">
+<h2>Compute error estimates<a class="headerlink" href="#compute-error-estimates" title="Permalink to this headline">#</a></h2>
+<p>In DOLFINx, assembling a scalar value does require any MPI-communication. <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.petsc.assemble_scalar</span></code> will only integrate over the cells owned by the process.
+It is up to the user to gather the results, which can be gathered on for instance all processes, or a single process for outputting.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">assemble_scalar</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">comm</span><span class="p">:</span> <span class="n">MPI</span><span class="o">.</span><span class="n">Comm</span><span class="p">):</span>
+    <span class="n">scalar_form</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">local_J</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">scalar_form</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">local_J</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">compute_errors</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">function_space</span><span class="o">.</span><span class="n">mesh</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+    <span class="n">error_u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="n">u_ex</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">H1_u</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">error_u</span><span class="p">,</span> <span class="n">error_u</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> \
+         <span class="o">+</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">error_u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">error_u</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+    <span class="n">velocity_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">H1_u</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">))</span>
+
+    <span class="n">error_p</span> <span class="o">=</span> <span class="o">-</span><span class="n">p</span> <span class="o">-</span> <span class="n">p_ex</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">L2_p</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">error_p</span> <span class="o">*</span> <span class="n">error_p</span> <span class="o">*</span> <span class="n">dx</span><span class="p">)</span>
+    <span class="n">pressure_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">L2_p</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">velocity_error</span><span class="p">,</span> <span class="n">pressure_error</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="solving-the-stokes-problem-with-a-block-preconditioner">
+<h2>Solving the Stokes problem with a block-preconditioner<a class="headerlink" href="#solving-the-stokes-problem-with-a-block-preconditioner" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solve_stokes</span><span class="p">(</span><span class="n">u_element</span><span class="p">,</span> <span class="n">p_element</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">u_element</span><span class="p">)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">p_element</span><span class="p">)</span>
+    
+    <span class="n">lhs_form</span> <span class="o">=</span> <span class="n">create_bilinear_form</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
+    <span class="n">rhs_form</span> <span class="o">=</span> <span class="n">create_linear_form</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
+    
+    <span class="n">bcs</span> <span class="o">=</span> <span class="n">create_velocity_bc</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">nsp</span> <span class="o">=</span> <span class="n">create_nullspace</span><span class="p">(</span><span class="n">rhs_form</span><span class="p">)</span>
+    <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">assemble_system</span><span class="p">(</span><span class="n">lhs_form</span><span class="p">,</span> <span class="n">rhs_form</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">nsp</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">setNullSpace</span><span class="p">(</span><span class="n">nsp</span><span class="p">)</span>
+
+    <span class="n">P</span> <span class="o">=</span> <span class="n">create_preconditioner</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">lhs_form</span><span class="p">,</span> <span class="n">bcs</span><span class="p">)</span>
+    <span class="n">ksp</span> <span class="o">=</span> <span class="n">create_block_solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
+ 
+    <span class="n">u</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Vec</span><span class="p">()</span><span class="o">.</span><span class="n">createNest</span><span class="p">([</span><span class="n">u</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">vector</span><span class="p">])</span>
+    <span class="n">ksp</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ksp</span><span class="o">.</span><span class="n">getConvergedReason</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">compute_errors</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 <p>We now use the Stokes solver we have defined to experiment with a range of element pairs that can be used. First, we define a function that takes an element as input and plots a graph showing the error as <span class="math notranslate nohighlight">\(h\)</span> is decreased.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-
-<span class="k">def</span> <span class="nf">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">convergence</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nmeshes</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    <span class="n">hs</span><span class="p">,</span> <span class="n">v_errors</span><span class="p">,</span> <span class="n">p_errors</span> <span class="o">=</span> <span class="n">compute_errors</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">nmeshes</span><span class="p">)</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="n">convergence_u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">convergence_p</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refinements</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">N0</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+    <span class="n">hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">refinements</span><span class="p">)</span>
+    <span class="n">u_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">refinements</span><span class="p">)</span>
+    <span class="n">p_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">refinements</span><span class="p">)</span>
+    <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">refinements</span><span class="p">):</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">N0</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="n">i</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_unit_square</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> 
+                                         <span class="n">cell_type</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">)</span>
+        <span class="n">u_errors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">,</span> <span class="n">p_errors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solve_stokes</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+        <span class="n">hs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">N</span>
     <span class="n">legend</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">convergence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">y_value</span> <span class="o">=</span> <span class="n">v_errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.4</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="n">convergence</span><span class="p">,</span> <span class="n">y_value</span><span class="p">],</span> <span class="s2">&quot;k--&quot;</span><span class="p">)</span>
-        <span class="n">legend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order </span><span class="si">{</span><span class="n">convergence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">v_errors</span><span class="p">,</span> <span class="s2">&quot;bo-&quot;</span><span class="p">)</span>
-    <span class="c1"># plt.plot(hs, p_errors, &quot;ro-&quot;)</span>
-    <span class="n">legend</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;velocity&quot;</span><span class="p">,</span> <span class="s2">&quot;pressure&quot;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">convergence_u</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y_value</span> <span class="o">=</span> <span class="n">u_errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.4</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="n">convergence_u</span><span class="p">,</span> <span class="n">y_value</span><span class="p">],</span> <span class="s2">&quot;k--&quot;</span><span class="p">)</span>
+        <span class="n">legend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order </span><span class="si">{</span><span class="n">convergence_u</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">convergence_p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y_value</span> <span class="o">=</span> <span class="n">p_errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.4</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">hs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">hs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="n">convergence_p</span><span class="p">,</span> <span class="n">y_value</span><span class="p">],</span> <span class="s2">&quot;m--&quot;</span><span class="p">)</span>
+        <span class="n">legend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;order </span><span class="si">{</span><span class="n">convergence_p</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">u_errors</span><span class="p">,</span> <span class="s2">&quot;bo-&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">p_errors</span><span class="p">,</span> <span class="s2">&quot;ro-&quot;</span><span class="p">)</span>
+    <span class="n">legend</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$H^1(\mathbf</span><span class="si">{u_h}</span><span class="s2">-\mathbf</span><span class="si">{u}</span><span class="s2">_</span><span class="si">{ex}</span><span class="s2">)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$L^2(p_h-p_ex)$&quot;</span><span class="p">]</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
@@ -691,6 +907,7 @@ title="Print to PDF"
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error in energy norm&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$h$&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -703,11 +920,9 @@ title="Print to PDF"
 <p>Using these elements, we do not converge to the solution.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-
-<span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -716,70 +931,72 @@ title="Print to PDF"
   warnings.warn(
 </pre></div>
 </div>
-<img alt="../_images/comparing_elements_14_1.png" src="../_images/comparing_elements_14_1.png" />
+<img alt="../_images/comparing_elements_42_1.png" src="../_images/comparing_elements_42_1.png" />
 </div>
 </div>
+</section>
+<section id="p2-dg0-fortin-1972">
+<h2>P2-DG0 (Fortin, 1972)<a class="headerlink" href="#p2-dg0-fortin-1972" title="Permalink to this headline">#</a></h2>
 <p>One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity (Fortin, 1972).</p>
 <p><img alt="../_images/element-Lagrange-triangle-2-dofs-large.png" src="../_images/element-Lagrange-triangle-2-dofs-large.png" /><img alt="../_images/element-Lagrange-triangle-0-dofs-large.png" src="../_images/element-Lagrange-triangle-0-dofs-large.png" /></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-
-<span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/comparing_elements_16_0.png" src="../_images/comparing_elements_16_0.png" />
+<img alt="../_images/comparing_elements_46_0.png" src="../_images/comparing_elements_46_0.png" />
 </div>
 </div>
+</section>
+<section id="crouzeix-raviart">
+<h2>Crouzeix-Raviart<a class="headerlink" href="#crouzeix-raviart" title="Permalink to this headline">#</a></h2>
 <p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space (Crouziex, Raviart, 1973).</p>
 <p><img alt="../_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png" src="../_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png" /><img alt="../_images/element-Lagrange-triangle-0-dofs-large.png" src="../_images/element-Lagrange-triangle-0-dofs-large.png" /></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CR&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-
-<span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CR&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/comparing_elements_18_0.png" src="../_images/comparing_elements_18_0.png" />
+<img alt="../_images/comparing_elements_50_0.png" src="../_images/comparing_elements_50_0.png" />
 </div>
 </div>
 </section>
-<section id="piecewise-linear-pressure-space">
-<h2>Piecewise linear pressure space<a class="headerlink" href="#piecewise-linear-pressure-space" title="Permalink to this headline">#</a></h2>
+<section id="piecewise-linear-pressure-space-crouziex-falk-1988">
+<h2>Piecewise linear pressure space (Crouziex, Falk, 1988)<a class="headerlink" href="#piecewise-linear-pressure-space-crouziex-falk-1988" title="Permalink to this headline">#</a></h2>
 <p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle (Crouziex, Falk, 1988).</p>
 <p><img alt="../_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png" src="../_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png" /><img alt="../_images/element-Lagrange-triangle-1-dofs-large.png" src="../_images/element-Lagrange-triangle-1-dofs-large.png" /></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">EnrichedElement</span><span class="p">(</span>
-        <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-        <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Bubble&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))),</span>
-    <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-
-<span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">enriched_element</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> \
+                 <span class="o">+</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Bubble&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="n">enriched_element</span><span class="p">)</span>
+<span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/comparing_elements_21_0.png" src="../_images/comparing_elements_21_0.png" />
+<img alt="../_images/comparing_elements_54_0.png" src="../_images/comparing_elements_54_0.png" />
 </div>
 </div>
 </section>
-<section id="piecewise-quadratic-pressure-space">
-<h2>Piecewise quadratic pressure space<a class="headerlink" href="#piecewise-quadratic-pressure-space" title="Permalink to this headline">#</a></h2>
+<section id="piecewise-quadratic-pressure-space-crouzeix-falk-1988">
+<h2>Piecewise quadratic pressure space (Crouzeix, Falk, 1988)<a class="headerlink" href="#piecewise-quadratic-pressure-space-crouzeix-falk-1988" title="Permalink to this headline">#</a></h2>
 <p>When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles (Crouzeix, Falk, 1988).</p>
 <p><img alt="../_images/element-bubble-enriched-Lagrange-triangle-3-dofs-large.png" src="../_images/element-bubble-enriched-Lagrange-triangle-3-dofs-large.png" /><img alt="../_images/element-Lagrange-triangle-2-dofs-large.png" src="../_images/element-Lagrange-triangle-2-dofs-large.png" /></p>
+<section id="custom-elements">
+<h3>Custom elements<a class="headerlink" href="#custom-elements" title="Permalink to this headline">#</a></h3>
 <p>We have to define this velocity element as a custom element (it cannot be created as an enriched element, as the basis functions of degree 3 Lagrange and degree 4 bubbles are not linearly independent). More examples of how custom elements can be created can be found <a class="reference external" href="https://docs.fenicsproject.org/basix/v0.5.0/python/demo/demo_custom_element.py.html">in the Basix documentation</a>.</p>
 <section id="defining-the-polynomial-space">
-<h3>Defining the polynomial space<a class="headerlink" href="#defining-the-polynomial-space" title="Permalink to this headline">#</a></h3>
+<h4>Defining the polynomial space<a class="headerlink" href="#defining-the-polynomial-space" title="Permalink to this headline">#</a></h4>
 <p>When creating a custom element, we must input the coefficients that define a basis of the set of polynomials that our element spans. In this example, we will represent the 9 functions in our space in terms of the 10 orthonormal polynomials of degree <span class="math notranslate nohighlight">\(\leqslant3\)</span> on a quadrilateral, so we create a 9 by 10 matrix.</p>
 <p>A polynomial <span class="math notranslate nohighlight">\(f\)</span> on the triangle can be written as
 $<span class="math notranslate nohighlight">\(f(x,y)=\sum_i\left(\int_0^1\int_0^{1-y}f(x, y)q_i(x, y) \,\mathrm{d}x\,\mathrm{d}y\right)q_i(x,y),\)</span><span class="math notranslate nohighlight">\(
@@ -803,7 +1020,7 @@ where \)</span>q_0<span class="math notranslate nohighlight">\(, \)</span>q_1$, 
 </div>
 </section>
 <section id="interpolation">
-<h3>Interpolation<a class="headerlink" href="#interpolation" title="Permalink to this headline">#</a></h3>
+<h4>Interpolation<a class="headerlink" href="#interpolation" title="Permalink to this headline">#</a></h4>
 <p>Next, we compute the points and matrices that define how functions can be interpolated into this space. For this element, all the DOFs are point evaluations, so we create lists of these points and (reshaped) identity matrices.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -828,22 +1045,22 @@ where \)</span>q_0<span class="math notranslate nohighlight">\(, \)</span>q_1$, 
 </div>
 </section>
 <section id="creating-the-element">
-<h3>Creating the element<a class="headerlink" href="#creating-the-element" title="Permalink to this headline">#</a></h3>
+<h4>Creating the element<a class="headerlink" href="#creating-the-element" title="Permalink to this headline">#</a></h4>
 <p>We now create the element by passing in the information we created above, as well as the cell type, value shape, number of derivatives used by the DOFs, map type, whether the element is discontinuous, the highest degree Lagrange space that is a subspace of the element, and the polynomial degree of the element.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p3_plus_bubbles</span> <span class="o">=</span> <span class="n">basix</span><span class="o">.</span><span class="n">ufl_wrapper</span><span class="o">.</span><span class="n">BasixElement</span><span class="p">(</span><span class="n">basix</span><span class="o">.</span><span class="n">create_custom_element</span><span class="p">(</span>
-    <span class="n">basix</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">,</span> <span class="p">[],</span> <span class="n">wcoeffs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">basix</span><span class="o">.</span><span class="n">MapType</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">element</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">VectorElement</span><span class="p">(</span><span class="n">p3_plus_bubbles</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-
-<span class="n">error_plot</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p3_plus_bubbles</span> <span class="o">=</span> <span class="n">basix</span><span class="o">.</span><span class="n">create_custom_element</span><span class="p">(</span><span class="n">basix</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">triangle</span><span class="p">,</span> <span class="p">[],</span> <span class="n">wcoeffs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">basix</span><span class="o">.</span><span class="n">MapType</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="n">basix</span><span class="o">.</span><span class="n">ufl_wrapper</span><span class="o">.</span><span class="n">BasixElement</span><span class="p">(</span><span class="n">p3_plus_bubbles</span><span class="p">))</span>
+<span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">refinements</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/comparing_elements_29_0.png" src="../_images/comparing_elements_29_0.png" />
+<img alt="../_images/comparing_elements_65_0.png" src="../_images/comparing_elements_65_0.png" />
 </div>
 </div>
+</section>
 </section>
 </section>
 <section id="references">
