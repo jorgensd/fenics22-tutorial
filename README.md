@@ -4,10 +4,10 @@
 Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
 
 Example:
-- [Example page](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/example.html#/)
-- [Time dependent problem](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part1/heat_eq.html#/)
-- [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part2/helmholtz.html#/)
-- [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/part3-stokes/comparing_elements.html#/)
+- [Example page](https://raw.githack.com/jorgensd/fenics22-tutorial/main/html/example.html#/)
+- [Time dependent problem](https://raw.githack.com/jorgensd/fenics22-tutorial/main/html/heat_eq.html#/)
+- [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/html/helmholtz.html#/)
+- [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/html/comparing_elements.html#/)
 
 ## Developer notes
 ### Adding a tutorial to the book

@@ -4,7 +4,7 @@
 format: jb-book
 root: intro
 chapters:
-- file: part1/example
-- file: part1/heat_eq
-- file: part2/helmholtz
-- file: part3/comparing_elements
+- file: example
+- file: heat_eq
+- file: helmholtz
+- file: comparing_elements
