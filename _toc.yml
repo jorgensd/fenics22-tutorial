@@ -8,3 +8,5 @@ chapters:
 - file: heat_eq
 - file: helmholtz
 - file: comparing_elements
+- file: access
+
