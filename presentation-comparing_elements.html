@@ -14658,7 +14658,7 @@ div.jp-OutputPrompt {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Stokes-equation">Stokes equation<a class="anchor-link" href="#Stokes-equation">&#182;</a></h1>
+<h1 id="The-Stokes-equations">The Stokes equations<a class="anchor-link" href="#The-Stokes-equations">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -14669,13 +14669,11 @@ div.jp-OutputPrompt {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-$$\begin{align}
--\Delta \mathbf{u} + \nabla p &amp;= \mathbf{f}(x,y) \quad \text{in } \Omega\\
-\nabla \cdot \mathbf{u} &amp;= 0 \qquad\quad \text{in } \Omega\\
-\mathbf{u} &amp;= \mathbf{0}\qquad\quad \text{on } \partial\Omega
-\end{align}
-$$<p>In this tutorial you will learn how to:</p>
-
+\begin{align*}
+-\Delta \mathbf{u} + \nabla p &amp;= \mathbf{f} &amp;&amp;\text{in } \Omega,\\
+\nabla \cdot \mathbf{u} &amp;= 0 &amp;&amp;\text{in } \Omega,\\
+\mathbf{u} &amp;= \mathbf{0}&amp;&amp;\text{on } \partial\Omega.
+\end{align*}
 </div>
 </div>
 </div>
@@ -14686,6 +14684,7 @@ $$<p>In this tutorial you will learn how to:</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In this tutorial you will learn how to:</p>
 <ul>
 <li>Create manufactured solutions with UFL</li>
 <li>Use block-preconditioners</li>
@@ -14752,8 +14751,7 @@ $$<p>In this tutorial you will learn how to:</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>However, we pay special attention to <code>UFL</code>, the unified form language package, which is used to represent variational forms.
-As we will dependend on alot of functions from this package, we 
-import the components that we will use in this code explicitly</p>
+As we will dependend on many functions from this package, we import the components that we will use in this code explicitly</p>
 
 </div>
 </div>
@@ -14835,7 +14833,7 @@ import the components that we will use in this code explicitly</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Here the input to each function is the coordinates (x,y) of the problem. These will in turn be defined by using <code>x = ufl.SpatialCoordinate(domain)</code>.</p>
+<p>Here, the input to each function is the coordinates (x,y) of the problem. These will be defined by using <code>x = ufl.SpatialCoordinate(domain)</code>.</p>
 <p>We use the strong formulation of the PDE to compute the source function $\mathbf{f}$ using UFL operators</p>
 
 </div>
@@ -14879,7 +14877,7 @@ import the components that we will use in this code explicitly</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We will solve the PDE by creating a set of variational forms, one for each component of the problem</p>
+<p>We will solve the PDE by creating a set of variational forms, one for each component of the problem. This leads to a blocked discrete system:</p>
 
 </div>
 </div>
@@ -14991,7 +14989,7 @@ A_{p,\mathbf{u}} &amp; 0
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>In the problem description above, we have only added a boundary condition for the velocity.
-This means that the problem is singular, i.e. the pressure is only determined up to a constant. We therefore create a PETSc nullspace operator for the pressure.</p>
+This means that the problem is singular, ie the pressure is only determined up to a constant. We therefore create a PETSc nullspace operator for the pressure.</p>
 
 </div>
 </div>
@@ -15077,7 +15075,7 @@ The bottom-right diagonal entry is a mass matrix.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Assemble-nest-system">Assemble nest system<a class="anchor-link" href="#Assemble-nest-system">&#182;</a></h2>
+<h2 id="Assemble-the-nested-system">Assemble the nested system<a class="anchor-link" href="#Assemble-the-nested-system">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -15129,7 +15127,7 @@ The bottom-right diagonal entry is a mass matrix.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>In legacy DOLFIN, convenience functions were provided to interact with linear algebra packages such as PETSc.
-In DOLFINx, we instead rely on supplying the users with the appropriate data types for the backend. Then the user can access all of the features of the backend, not being constrained to the layer added in DOLFIN. One can also leverage the detailed documentation of PETSc. For block systems, see: <a href="https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices">https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices</a></p>
+In DOLFINx, we instead supply users with the appropriate data types, so that the user can access all of the features of the linear package rather than being constrained to functions in our wrapper. One can also leverage the detailed documentation of PETSc. For blocked systems, see: <a href="https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices">https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices</a></p>
 
 </div>
 </div>
@@ -15287,7 +15285,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We now use the Stokes solver we have defined to experiment with a range of element pairs that can be used. First, we define a function that takes an element as input and plots a graph showing the error as $h$ is decreased.</p>
+<p>We now use the Stokes solver we have defined to experiment with a range of element pairs that can be used. First, we define a function that takes a pair of elements as input and plots a graph showing the error as $h$ is decreased.</p>
 
 </div>
 </div>
@@ -15385,7 +15383,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="P2-DG0-(Fortin,-1972)">P2-DG0 (Fortin, 1972)<a class="anchor-link" href="#P2-DG0-(Fortin,-1972)">&#182;</a></h2>
+<h2 id="P2-DG0-%7Bcite%7Dfortin-phd">P2-DG0 {cite}<code>fortin-phd</code><a class="anchor-link" href="#P2-DG0-%7Bcite%7Dfortin-phd">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -15397,7 +15395,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity (Fortin, 1972).</p>
+<p>One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity.</p>
 
 </div>
 </div>
@@ -15425,7 +15423,7 @@ jp-needs-light-background
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="s2">"Lagrange"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">"DG"</span><span class="p">,</span> <span class="s2">"triangle"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="n">convergence_p</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15470,7 +15468,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Crouzeix-Raviart">Crouzeix-Raviart<a class="anchor-link" href="#Crouzeix-Raviart">&#182;</a></h2>
+<h2 id="Crouzeix-Raviart-%7Bcite%7Dcrouzeix-raviart">Crouzeix-Raviart {cite}<code>crouzeix-raviart</code><a class="anchor-link" href="#Crouzeix-Raviart-%7Bcite%7Dcrouzeix-raviart">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -15482,7 +15480,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space (Crouziex, Raviart, 1973).</p>
+<p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space.</p>
 
 </div>
 </div>
@@ -15555,7 +15553,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Piecewise-linear-pressure-space-(Crouziex,-Falk,-1988)">Piecewise linear pressure space (Crouziex, Falk, 1988)<a class="anchor-link" href="#Piecewise-linear-pressure-space-(Crouziex,-Falk,-1988)">&#182;</a></h2>
+<h2 id="Piecewise-linear-pressure-space-%7Bcite%7Dcrouzeix-falk">Piecewise linear pressure space {cite}<code>crouzeix-falk</code><a class="anchor-link" href="#Piecewise-linear-pressure-space-%7Bcite%7Dcrouzeix-falk">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -15567,7 +15565,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle (Crouziex, Falk, 1988).</p>
+<p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle.</p>
 
 </div>
 </div>
@@ -15643,7 +15641,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Piecewise-quadratic-pressure-space-(Crouzeix,-Falk,-1988)">Piecewise quadratic pressure space (Crouzeix, Falk, 1988)<a class="anchor-link" href="#Piecewise-quadratic-pressure-space-(Crouzeix,-Falk,-1988)">&#182;</a></h2>
+<h2 id="Piecewise-quadratic-pressure-space-%7Bcite%7Dcrouzeix-falk">Piecewise quadratic pressure space {cite}<code>crouzeix-falk</code><a class="anchor-link" href="#Piecewise-quadratic-pressure-space-%7Bcite%7Dcrouzeix-falk">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -15655,7 +15653,7 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles (Crouzeix, Falk, 1988).</p>
+<p>When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles.</p>
 
 </div>
 </div>
@@ -15861,31 +15859,14 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="References">References<a class="anchor-link" href="#References">&#182;</a></h2><p>Crouzeix, Michel and Falk, Richard S. Nonconforming finite elements for the Stokes problem, <em>Mathematics of Computation</em> 52, 437–456, 1989. [DOI: <a href="https://doi.org/10.2307/2008475">10.2307/2008475</a>]</p>
-<p>Crouzeix, Michel and Raviart, Pierre-Arnaud. Conforming and nonconforming finite element methods for solving the stationary Stokes equations, <em>Revue Française d'Automatique, Informatique et Recherche Opérationnelle</em> 3, 33–75, 1973. [DOI: <a href="https://doi.org/10.1051/m2an/197307R300331">10.1051/m2an/197307R300331</a>]</p>
-<p>Fortin, Michel. Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis (PhD thesis), Univ. Paris, 1972.</p>
-<p>The images of elements used in this example were taken from DefElement:<br />
-The DefElement contributors. DefElement: an encyclopedia of finite element definitions, 2022, <a href="https://defelement.com">https://defelement.com</a> [Online; accessed: 15-August-2022].</p>
+<h2 id="References">References<a class="anchor-link" href="#References">&#182;</a></h2><p>The images of elements used in this example were taken from DefElement {cite}<code>defelement</code>.</p>
+
+<pre><code>{bibliography}
+:style: unsrt</code></pre>
 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div></section></section>
 </div>
 </div>
