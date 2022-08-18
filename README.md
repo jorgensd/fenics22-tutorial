@@ -1,4 +1,4 @@
-# FEniCSx Tutorial @ FEniCS 2022](https://fenicsproject.org/fenics-2022/) in San Diego.
+# FEniCSx Tutorial @ [FEniCS 2022](https://fenicsproject.org/fenics-2022/) in San Diego.
 
 This repository contains the material that was used for the FEniCSx tutorial at the FEniCS 2022 conference.
 
