@@ -31,4 +31,4 @@ jobs:
 
       - name: Test building the book
         run: 
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build .
