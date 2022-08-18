@@ -133,3 +133,9 @@ _build/*
 
 # nano
 .*.swp
+
+# output
+*.msh
+*.h5
+*.xdmf
+*.bp

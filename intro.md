@@ -1,4 +1,4 @@
-# FEniCSx tutorial @ [FEniCS 2022](https://fenicsproject.org/fenics-2022/)
+# FEniCSx Tutorial @ [FEniCS 2022](https://fenicsproject.org/fenics-2022/)
 
 ## Presenters
 - Igor A. Baratta (University of Cambridge)

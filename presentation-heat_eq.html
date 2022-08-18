@@ -14670,7 +14670,7 @@ div.jp-OutputPrompt {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>This notebook will show you how to solve a transient problem using DOLFINx, and highlight differences between <code>dolfin</code> and <code>dolfinx</code>.
+<p>This notebook will show you how to solve a transient problem using DOLFINx, and highlight differences between legacy DOLFIN and DOLFINx.
 We start by looking at the structure of DOLFINx:</p>
 
 </div>
@@ -14684,7 +14684,7 @@ We start by looking at the structure of DOLFINx:</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Relevant DOLFINx modules</p>
+<p>Relevant DOLFINx modules:</p>
 <ul>
 <li><code>dolfinx.mesh</code>: Classes and functions related to the computational domain</li>
 <li><code>dolfinx.fem</code>: Finite element method functionality</li>
@@ -14731,7 +14731,7 @@ We start by looking at the structure of DOLFINx:</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To create a simple computational domain in DOLFINx, we use the mesh generation utils in <code>dolfinx.mesh</code>. Here we have tools to build rectangles of triangular/quadrilateral and boxes of tetrahedral/hexahedral elements. We start by creating a rectangle spanning [0,0]X[10,3], with 100 and 20 elements in each direction respectively.</p>
+<p>To create a simple computational domain in DOLFINx, we use the mesh generation utilities in <code>dolfinx.mesh</code>. In this module, we have the tools to build rectangles of triangular or quadrilateral elements and boxes of tetrahedral or hexahedral elements. We start by creating a rectangle spanning $[0,0]\times[10,3]$, with 100 and 20 elements in each direction respectively.</p>
 
 </div>
 </div>
@@ -14766,9 +14766,9 @@ We start by looking at the structure of DOLFINx:</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>As opposed to DOLFIN, we work on simply python structures (nested listes/numpy arrays).
-We also note that we have to send in a communicator. This is because we want the user to be aware of how the mesh is distributed when running in parallel. 
-If we would use the communicator <code>MPI.COMM_SELF</code>, each process initialized when running the script would have a mesh local to its process.</p>
+<p>In constrast to legacy DOLFIN, we work on simple Python structures (nested listes, numpy arrays, etc).
+We also note that we have to send in an MPI communicator. This is because we want the user to be aware of how the mesh is distributed when running in parallel. 
+If we use the communicator <code>MPI.COMM_SELF</code>, each process initialised when running the script would have a version of the full mesh local to its process.</p>
 
 </div>
 </div>
@@ -14810,7 +14810,7 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>With Pyvista we can export the plots in many ways, including pngs, interactive notebook plots and html</p>
+<p>With Pyvista, we can export the plots to many formats including pngs, interactive notebook plots, and html</p>
 
 </div>
 </div>
@@ -14908,7 +14908,7 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We will solve the heat equation, with a backward Euler time stepping scheme, i.e.</p>
+<p>We will solve the heat equation, with a backward Euler time stepping scheme, ie</p>
 
 </div>
 </div>
@@ -14924,11 +14924,11 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 $$
 \begin{align*}
 \frac{u_{n+1}-u_n}{\Delta t} - \nabla \cdot (\mu  \nabla u_{n+1}) &amp;= f(x,t_{n+1}) &amp;&amp; \text{in } \Omega,\\
-u &amp;= u_D(x,t_{n+1}) &amp;&amp;\text{on } \partial\Omega_D,\\
-\mu\frac{\partial u_{n+1}}{\partial n} &amp;=0 &amp;&amp;\text{on } \partial\Omega_N
+u &amp;= u_D(x,t_{n+1}) &amp;&amp;\text{on } \partial\Omega_\text{D},\\
+\mu\frac{\partial u_{n+1}}{\partial n} &amp;=0 &amp;&amp;\text{on } \partial\Omega_\text{N},
 \end{align*}
 $$<p>
-with $u_D = y\cos(0.25t)$, $f=0$.</p>
+with $u_D = y\cos(0.25t)$, $f=0$. For this example, we take $\Omega$ to be rectangle defined above, $\Omega_\text{D}$ if the left-hand edge of the rectangle, and $\Omega_\text{N}$ is the remaining three edges of the rectangle.</p>
 
 </div>
 </div>
@@ -14941,7 +14941,7 @@ with $u_D = y\cos(0.25t)$, $f=0$.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We start by defining the function space, the corresponding test and trial functions, as well as material and temporal parameters. We note that we use explicit imports from ufl to create the test and trial functions, to avoid confusion as to where they originate from. DOLFINx and UFL supports both real and complex valued functions. However, to be able to use the PETSc linear algebra backend, which only supports a single floating type at compilation, we need to use appropriate scalar types in our variational form. This ensures that we generate consistent matrices/vectors</p>
+<p>We start by defining the function space, the corresponding test and trial functions, as well as material and temporal parameters. Note that we use explicit imports from UFL to create the test and trial functions, to avoid confusion as to where they originate from. DOLFINx and UFL support both real and complex valued functions. However, to be able to use the PETSc linear algebra backend, which only supports a single floating type at compilation, we need to use appropriate scalar types in our variational form. This ensures that we generate consistent matrices and vectors.</p>
 
 </div>
 </div>
@@ -14978,7 +14978,7 @@ with $u_D = y\cos(0.25t)$, $f=0$.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The variational form can be written in UFL syntax, as done in old DOLFIN:</p>
+<p>The variational form can be written in UFL syntax, as done in legacy DOLFIN:</p>
 
 </div>
 </div>
@@ -15034,7 +15034,7 @@ with $u_D = y\cos(0.25t)$, $f=0$.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>There are many ways of creating boundary conditions. In this example, we will create a time and spatially dependent function <code>uD(x,t)</code>. To do this we will use a function working on numpy arrays, where the input <code>x</code> is a 2D vector where each column corresponds to a coordinate (x,y,z).</p>
+<p>There are many ways of creating boundary conditions. In this example, we will create function $u_\text{D}(x,t)$ dependent on both space and time. To do this, we define a function that takes a 2-dimensional array <code>x</code>.  Each column of <code>x</code> corresponds to an input coordinate $(x,y,z)$ and this function operates directly on the columns of <code>x</code>.</p>
 
 </div>
 </div>
@@ -15071,8 +15071,8 @@ with $u_D = y\cos(0.25t)$, $f=0$.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>To give the user freedom to set boundary conditions on single degrees of freedom, the <code>dolfinx.fem.dirichletbc</code> takes in the list of degrees of freedom as input. These can be obtained in many ways, but we supply a few convenience functions, such as <code>dolfinx.fem.locate_dofs_topological</code> and <code>dolfinx.fem.locate_dofs_geometrical</code>.
-Locating dofs topologically is generally advised, as certain finite elements dofs do not have a geometrical coordinate (Nedelec, RT etc). DOLFINx also has convenicence functions to obtain a list of all boundary facets.</p>
+<p>To give the user freedom to set boundary conditions on single degrees of freedom, the function <code>dolfinx.fem.dirichletbc</code> takes in the list of degrees of freedom (DOFs) as input. The DOFs on the boundary can be obtained in many ways: DOLFINx supplies a few convenience functions, such as <code>dolfinx.fem.locate_dofs_topological</code> and <code>dolfinx.fem.locate_dofs_geometrical</code>.
+Locating dofs topologically is generally advised, as certain finite elements have DOFs that do not have a geometrical coordinates associated with them (eg Nédélec and Raviart--Thomas). DOLFINx also has convenicence functions to obtain a list of all boundary facets.</p>
 
 </div>
 </div>
@@ -15150,8 +15150,7 @@ Locating dofs topologically is generally advised, as certain finite elements dof
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>As the left hand side of our problem (the matrix) is time independent, we would like to have more control over the matrix and vector assembly for each time step.
-We assemble the matrix once outside the temporal loop.</p>
+<p>As the left hand side of our problem (the matrix) is time independent, we would like avoid re-assembling it at every time step. DOLFINx gives the user more control over assembly so that this can be done. We assemble the matrix once outside the temporal loop.</p>
 
 </div>
 </div>
@@ -15183,7 +15182,7 @@ We assemble the matrix once outside the temporal loop.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Next, we can generate the integration kernel for the right hand side, and create the rhs vector <code>b</code> that we will assemble into at each time step</p>
+<p>Next, we can generate the integration kernel for the right hand side (RHS), and create the RHS vector <code>b</code> that we will assemble into at each time step.</p>
 
 </div>
 </div>
@@ -15214,7 +15213,7 @@ We assemble the matrix once outside the temporal loop.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We next create the PETSc KSP solver, and set it to solve it with an <a href="https://hypre.readthedocs.io/en/latest/solvers-boomeramg.html">algebraic multigrid method</a>.</p>
+<p>We next create the PETSc KSP (Krylov subspace method) solver, and set it to solve using an <a href="https://hypre.readthedocs.io/en/latest/solvers-boomeramg.html">algebraic multigrid method</a>.</p>
 
 </div>
 </div>
@@ -15263,7 +15262,7 @@ We assemble the matrix once outside the temporal loop.</p>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>As we are solving a time dependent problem, we would like to create a time dependent animation of the solution. 
 We do this by using <a href="https://docs.pyvista.org/">pyvista</a>, which uses VTK structures for plotting.
-In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh</code> that can create meshes compatible with VTK formatting, based on meshes or (discontinuous) Lagrange function spaces.</p>
+In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh</code> that can create meshes compatible with VTK formatting, based on meshes of (discontinuous) Lagrange function spaces.</p>
 
 </div>
 </div>
