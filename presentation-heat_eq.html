@@ -14748,7 +14748,7 @@ We start by looking at the structure of DOLFINx:</p>
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="n">length</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span>
 <span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">60</span>
-<span class="n">extent</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">]]</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">]]</span>
 <span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span>
     <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
 </pre></div>
@@ -14793,7 +14793,7 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">local_domain</span> <span class="o">=</span>  <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">local_domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span>
     <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_SELF</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
 </pre></div>
 
@@ -15280,7 +15280,7 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyvista</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># Start virtual framebuffer for plotting</span>
+<span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Start virtual framebuffer for plotting</span>
 <span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
 <span class="n">plotter</span><span class="o">.</span><span class="n">open_gif</span><span class="p">(</span><span class="s2">"u_time.gif"</span><span class="p">)</span>
 </pre></div>
@@ -15317,9 +15317,9 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">renderer</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">renderer</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                             <span class="n">cmap</span><span class="o">=</span><span class="n">viridis</span><span class="p">,</span> <span class="n">scalar_bar_args</span><span class="o">=</span><span class="n">sargs</span><span class="p">,</span>
-                            <span class="n">clim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">height</span><span class="p">])</span>
+                            <span class="n">clim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="p">])</span>
 </pre></div>
 
      </div>
@@ -15367,16 +15367,16 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 <span class="k">while</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">T</span><span class="p">:</span>
     <span class="c1"># Update boundary condition</span>
     <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span><span class="o">.</span><span class="n">value</span>
     <span class="n">uD</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">uD_function</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
-    
+
     <span class="c1"># Assemble RHS</span>
     <span class="n">b</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_vector</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">compiled_L</span><span class="p">)</span>
-    
+
     <span class="c1"># Apply boundary condition</span>
     <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">apply_lifting</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="p">[</span><span class="n">compiled_a</span><span class="p">],</span> <span class="p">[</span><span class="n">bcs</span><span class="p">])</span>
     <span class="n">b</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_reverse</span><span class="p">(</span><span class="n">la</span><span class="o">.</span><span class="n">ScatterMode</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
@@ -15385,10 +15385,10 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
     <span class="c1"># Solve linear problem</span>
     <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">uh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
     <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
-    
+
     <span class="c1"># Update un</span>
     <span class="n">un</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span>
-    
+
     <span class="c1"># Update plotter</span>
     <span class="n">plotter</span><span class="o">.</span><span class="n">update_scalars</span><span class="p">(</span><span class="n">uh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">render</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">plotter</span><span class="o">.</span><span class="n">write_frame</span><span class="p">()</span>
