@@ -14742,16 +14742,15 @@ We start by looking at the structure of DOLFINx:</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 <span class="n">length</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span>
 <span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">60</span>
-<span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> 
-                               <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">],[</span><span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">]],</span>
-                               <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">],</span> 
-                               <span class="n">cell_type</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">]]</span>
+<span class="n">domain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span>
+    <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14791,13 +14790,11 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">local_domain</span> <span class="o">=</span>  <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_SELF</span><span class="p">,</span>
-                               <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">],[</span><span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">]],</span>
-                               <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">],</span> 
-                               <span class="n">cell_type</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">local_domain</span> <span class="o">=</span>  <span class="n">mesh</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span>
+    <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_SELF</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="p">[</span><span class="n">Nx</span><span class="p">,</span> <span class="n">Ny</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14819,7 +14816,24 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 </div>
 </div>
 </div>
-</aside><div class="fragment"><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide-input">
+</aside><aside class="notes">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide-output">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plotter</span><span class="o">.</span><span class="n">export_html</span><span class="p">(</span><span class="s2">"./beam.html"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">"pythreejs"</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
 
 <div class="jp-Cell-outputWrapper">
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
@@ -14835,10 +14849,10 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>2022-08-17 16:34:01.355 (   0.833s) [        6F032000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
-2022-08-17 16:34:01.359 (   0.836s) [        6F032000]    vtkExtractEdges.cxx:551   INFO| Created 9740 edges
-2022-08-17 16:34:01.394 (   0.872s) [        6F032000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
-2022-08-17 16:34:01.397 (   0.875s) [        6F032000]    vtkExtractEdges.cxx:551   INFO| Created 9740 edges
+<pre>2022-08-18 10:14:20.287 (   0.952s) [        2DE9F000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
+2022-08-18 10:14:20.292 (   0.956s) [        2DE9F000]    vtkExtractEdges.cxx:551   INFO| Created 9740 edges
+2022-08-18 10:14:20.344 (   1.009s) [        2DE9F000]    vtkExtractEdges.cxx:435   INFO| Executing edge extractor: points are renumbered
+2022-08-18 10:14:20.348 (   1.013s) [        2DE9F000]    vtkExtractEdges.cxx:551   INFO| Created 9740 edges
 </pre>
 </div>
 </div>
@@ -14847,7 +14861,8 @@ If we would use the communicator <code>MPI.COMM_SELF</code>, each process initia
 
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide-input">
+</div>
+</aside><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide-input">
 
 <div class="jp-Cell-outputWrapper">
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
@@ -14875,7 +14890,7 @@ style="height:500px;width:100%;border:none;overflow:hidden;">></iframe>
 
 </div>
 
-</div></div></section></section><section><section>
+</div></section></section><section><section>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -14909,12 +14924,12 @@ style="height:500px;width:100%;border:none;overflow:hidden;">></iframe>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 $$
 \begin{align*}
-\frac{u_{n+1}-u_n}{\Delta t} - \nabla \cdot (\mu  \nabla u_{n+1}) &amp;= f(x,t_{n+1}) \qquad \text{in } \Omega,\\
-u &amp;= u_D(x,t_{n+1}) \qquad \text{on } \partial\Omega_D,\\
-\mu\frac{\partial u_{n+1}}{\partial n} &amp;=0 \qquad \text{on } \partial\Omega_N
+\frac{u_{n+1}-u_n}{\Delta t} - \nabla \cdot (\mu  \nabla u_{n+1}) &amp;= f(x,t_{n+1}) &amp;&amp; \text{in } \Omega,\\
+u &amp;= u_D(x,t_{n+1}) &amp;&amp;\text{on } \partial\Omega_D,\\
+\mu\frac{\partial u_{n+1}}{\partial n} &amp;=0 &amp;&amp;\text{on } \partial\Omega_N
 \end{align*}
 $$<p>
-with $u_D = 1+0.5y\cos(0.5t)$, $f=0$.</p>
+with $u_D = y\cos(0.25t)$, $f=0$.</p>
 
 </div>
 </div>
@@ -14947,7 +14962,7 @@ with $u_D = 1+0.5y\cos(0.5t)$, $f=0$.</p>
 <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">un</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<span class="n">mu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">)</span>
 <span class="n">dt</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
 </pre></div>
 
@@ -14978,8 +14993,8 @@ with $u_D = 1+0.5y\cos(0.5t)$, $f=0$.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">un</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span> \
-  <span class="o">-</span> <span class="n">inner</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">un</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">F</span> <span class="o">-=</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
 <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span> <span class="o">=</span> <span class="n">system</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
@@ -15031,12 +15046,13 @@ with $u_D = 1+0.5y\cos(0.5t)$, $f=0$.</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[29]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="k">def</span> <span class="nf">uD_function</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">0.25</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
 
 <span class="n">uD</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
 <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
@@ -15068,15 +15084,15 @@ Locating dofs topologically is generally advised, as certain finite elements dof
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tdim</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span>
-<span class="k">def</span> <span class="nf">dirichlet_facets</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">dirichlet_facets</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">length</span><span class="p">)</span>
 
-<span class="n">bc_facets</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">tdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                                          <span class="n">dirichlet_facets</span><span class="p">)</span>
+<span class="n">tdim</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span>
+<span class="n">bc_facets</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">locate_entities_boundary</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span> <span class="n">tdim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dirichlet_facets</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15089,10 +15105,10 @@ Locating dofs topologically is generally advised, as certain finite elements dof
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bndry_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">tdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">bc_facets</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bndry_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">tdim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bc_facets</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15298,17 +15314,12 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">viridis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">"viridis"</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
-<span class="n">sargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">title_font_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">label_font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">"</span><span class="si">%.2e</span><span class="s2">"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
-            <span class="n">position_x</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">position_y</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">renderer</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">renderer</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                             <span class="n">cmap</span><span class="o">=</span><span class="n">viridis</span><span class="p">,</span> <span class="n">scalar_bar_args</span><span class="o">=</span><span class="n">sargs</span><span class="p">,</span>
-                            <span class="n">clim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="n">height</span><span class="p">])</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
-<span class="n">plotter</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="mf">1.3</span><span class="p">)</span>
+                            <span class="n">clim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">height</span><span class="p">])</span>
 </pre></div>
 
      </div>
@@ -15353,7 +15364,7 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
@@ -15400,22 +15411,6 @@ In DOLFINx, we have the convenience function <code>dolfinx.plot.create_vtk_mesh<
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div></section></section>
 </div>
 </div>
