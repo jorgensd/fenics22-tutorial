@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Welcome to the FEniCSx tutorial @ UCSD &#8212; FEniCS 22 tutorial</title>
+    <title>FEniCSx tutorial @ FEniCS 2022 &#8212; FEniCS 22 tutorial</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -110,7 +110,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Welcome to the FEniCSx tutorial @ UCSD
+                    FEniCSx tutorial @ FEniCS 2022
                 </a>
             </li>
         </ul>
@@ -133,6 +133,11 @@ const thebe_selector_output = ".output, .cell_output"
  <li class="toctree-l1">
   <a class="reference internal" href="comparing_elements.html">
    Stokes equation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="access.html">
+   Accessing the tutorial
   </a>
  </li>
 </ul>
@@ -307,23 +312,80 @@ title="Print to PDF"
     </ul>
   </div>
 </div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
 
     </div>
 </div>
 
 <!-- Table of contents -->
 <div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#presenters">
+   Presenters
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contributors">
+   Contributors
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contents">
+   Contents
+  </a>
+ </li>
+</ul>
+
+    </nav>
 </div>
     </div>
     <div class="article row">
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Welcome to the FEniCSx tutorial @ UCSD</h1>
+                <h1>FEniCSx tutorial @ FEniCS 2022</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#presenters">
+   Presenters
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contributors">
+   Contributors
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contents">
+   Contents
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -331,32 +393,67 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="welcome-to-the-fenicsx-tutorial-ucsd">
-<h1>Welcome to the FEniCSx tutorial &#64; <a class="reference external" href="https://fenicsproject.org/fenics-2022/">UCSD</a><a class="headerlink" href="#welcome-to-the-fenicsx-tutorial-ucsd" title="Permalink to this headline">#</a></h1>
-<p>Presenters:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="fenicsx-tutorial-fenics-2022">
+<h1>FEniCSx tutorial &#64; <a class="reference external" href="https://fenicsproject.org/fenics-2022/">FEniCS 2022</a><a class="headerlink" href="#fenicsx-tutorial-fenics-2022" title="Permalink to this headline">#</a></h1>
+<section id="presenters">
+<h2>Presenters<a class="headerlink" href="#presenters" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/IgorBaratta">Igor A. Baratta</a> (University of Cambridge)</p></li>
-<li><p><a class="reference external" href="https://github.com/jpdean/">Joseph Dean</a> (University of Cambridge)</p></li>
-<li><p><a class="reference external" href="https://github.com/jorgensd">Jørgen S. Dokken</a> (University of Cambridge)</p></li>
-<li><p><a class="reference external" href="https://github.com/mscroggs">Matthew W. Scroggs</a> (University of Cambridge)</p></li>
-<li><p><a class="reference external" href="https://github.com/SarahRo/">Sarah Roggendorf</a> (University of Cambridge)</p></li>
+<li><p>Igor A. Baratta (University of Cambridge)</p>
+<ul>
+<li><p><i class="fab fa-github"></i> <a class="reference external" href="https://github.com/IgorBaratta">IgorBaratta</a></p></li>
+<li><p><i class="fab fa-discourse"></i> <a class="reference external" href="https://fenicsproject.discourse.group/u/IgorBaratta">IgorBaratta</a></p></li>
 </ul>
-<p>We would like to thank the following for their contributions to this tutorial</p>
+</li>
+<li><p>Joseph Dean (University of Cambridge)</p>
+<ul>
+<li><p><i class="fab fa-github"></i> <a class="reference external" href="https://github.com/jpdean">jpdean</a></p></li>
+<li><p><i class="fab fa-discourse"></i> <a class="reference external" href="https://fenicsproject.discourse.group/u/jpdean">jpdean</a></p></li>
+</ul>
+</li>
+<li><p>Jørgen S. Dokken (University of Cambridge)</p>
+<ul>
+<li><p><i class="fab fa-github"></i> <a class="reference external" href="https://github.com/jorgensd">jorgensd</a></p></li>
+<li><p><i class="fab fa-internet-explorer"></i> <a class="reference external" href="https://jsdokken.com">jsdokken.com</a></p></li>
+<li><p><i class="fab fa-discourse"></i> <a class="reference external" href="https://fenicsproject.discourse.group/u/dokken">dokken</a></p></li>
+</ul>
+</li>
+<li><p>Sarah Roggendorf (University of Cambridge)</p>
+<ul>
+<li><p><i class="fab fa-github"></i> <a class="reference external" href="https://github.com/SarahRo">SarahRo</a></p></li>
+</ul>
+</li>
+<li><p>Matthew W. Scroggs (University of Cambridge)</p>
+<ul>
+<li><p><i class="fab fa-github"></i> <a class="reference external" href="https://github.com/mscroggs">mscroggs</a></p></li>
+<li><p><i class="fab fa-internet-explorer"></i> <a class="reference external" href="https://mscroggs.co.uk">mscroggs.co.uk</a></p></li>
+<li><p><i class="fab fa-discourse"></i> <a class="reference external" href="https://fenicsproject.discourse.group/u/mscroggs">mscroggs</a></p></li>
+<li><p><i class="fab fa-twitter"></i> <a class="reference external" href="https://twitter.com/mscroggs">&#64;mscroggs</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="contributors">
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/adeebkor">Adeeb Arif Kor</a> (University of Cambridge)</p></li>
 <li><p><a class="reference external" href="https://github.com/david-kamensky">David Kamensky</a> (University of California San Diego)</p></li>
+<li><p><a class="reference external" href="https://github.com/adeebkor">Adeeb Arif Kor</a> (University of Cambridge)</p></li>
 <li><p><a class="reference external" href="https://github.com/michalhabera/">Michal Habera</a> (Université du Luxembourg)</p></li>
+<li><p><a class="reference external" href="https://github.com/chrisrichardson">Chris Richardson</a> (University of Cambridge)</p></li>
 <li><p><a class="reference external" href="https://github.com/nate-sime">Nathan Sime</a> (Carnegie Institution for Science)</p></li>
 </ul>
-<p>In this tutorial, we will go through the following examples:</p>
+</section>
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="example.html">Introduction to DOLFINx</a></li>
 <li class="toctree-l1"><a class="reference internal" href="heat_eq.html">Solving a time-dependent problem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helmholtz.html">The Helmholtz equation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="comparing_elements.html">Stokes equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="access.html">Accessing the tutorial</a></li>
 </ul>
 </div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
