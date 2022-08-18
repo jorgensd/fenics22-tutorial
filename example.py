@@ -17,9 +17,6 @@
 # # Introduction to DOLFINx
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# Author: Jørgen S. Dokken
-
-# + [markdown] slideshow={"slide_type": "notes"} tags=[]
 # We start by importing DOLFINx, and check the version and git commit hash
 
 # + tags=[]
@@ -32,7 +29,7 @@ print(f"You have DOLFINx {dolfinx.__version__} installed, "
 # ## Using a 'built-in' mesh
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# No wildcards `*`, as in old DOLFIN, i.e.s
+# In DOLFINx, we do not use wildcard imports as we used to in legacy DOLFIN, ie
 
 # + [markdown] tags=[]
 # ```python
@@ -40,7 +37,7 @@ print(f"You have DOLFINx {dolfinx.__version__} installed, "
 # ```
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# We instead import `dolfinx.mesh` as a module
+# We instead import `dolfinx.mesh` as a module:
 
 # + slideshow={"slide_type": "fragment"} tags=[]
 import dolfinx
@@ -50,7 +47,7 @@ mesh = dolfinx.mesh.create_unit_square(MPI.COMM_WORLD, 10, 10)
 # ## Interface to external libraries
 
 # + [markdown] slideshow={"slide_type": "notes"} tags=[]
-# We use external libraries, such as `pyvista` for plotting.import dolfinx.plot
+# We use external libraries, such as `pyvista` for plotting.
 # -
 
 import dolfinx.plot
