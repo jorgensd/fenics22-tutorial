@@ -1,6 +1,12 @@
-# [The FEniCSx Tutorial](https://jorgensd.github.io/fenics22-tutorial/intro.html) [@FEniCS 22](https://fenicsproject.org/fenics-2022/) in San Diego.
+# FEniCSx Tutorial @ FEniCS 2022](https://fenicsproject.org/fenics-2022/) in San Diego.
 
-## Render the HTML files directly of Github
+This repository contains the material that was used for the FEniCSx tutorial at the FEniCS 2022 conference.
+
+All the resources from this tutorial can be founds in [https://jorgensd.github.io/fenics22-tutorial](this Jupyter Book).
+
+## Developer notes
+
+### Rendering the HTML presentation files directly on Github
 Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
 
 Example:
@@ -9,7 +15,6 @@ Example:
 - [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/presentation-helmholtz.html#/)
 - [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/presentation-comparing_elements.html#/)
 
-## Developer notes
 ### Adding a tutorial to the book
 
 Add a chapter to `_toc.yml`.
@@ -94,5 +99,3 @@ If you run the code with `dolfinx/lab:v0.5.0` using for instance:
 docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dolfinx/lab:v0.5.0
 ```
 no copying is required.
-
-
