@@ -1,4 +1,4 @@
-# Accessing the tutorial
+# Further information
 
 The tutorial can be found at [jorgensd.github.io/fenics22-tutorial](https://jorgensd.github.io/fenics22-tutorial)
 
