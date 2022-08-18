@@ -40,7 +40,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build  -W .
+          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build .
 
       # Push book to HTML to github pages
       - name: GitHub Pages action
