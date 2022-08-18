@@ -24,9 +24,9 @@
 
 # + tags=[]
 import dolfinx
-print(f"You have DOLFINx {dolfinx.__version__} installed, " +
+print(f"You have DOLFINx {dolfinx.__version__} installed, "
       "based on commit \nhttps://github.com/FEniCS/dolfinx/commit/"
-      + f"{dolfinx.common.git_commit_hash}")
+      f"{dolfinx.common.git_commit_hash}")
 
 # + [markdown] slideshow={"slide_type": "slide"} tags=[]
 # ## Using a 'built-in' mesh
@@ -66,7 +66,7 @@ pyvista.start_xvfb(0.5)
 pyvista.set_jupyter_backend("pythreejs")
 
 # + slideshow={"slide_type": "fragment"} tags=[]
-plotter = pyvista.Plotter(window_size=(600,600))
+plotter = pyvista.Plotter(window_size=(600, 600))
 renderer = plotter.add_mesh(grid, show_edges=True)
 
 # + slideshow={"slide_type": "skip"} tags=["hide-cell"]
@@ -82,5 +82,4 @@ plotter.export_html("./mesh.html", backend="pythreejs")
 # We can get interactive plots in notebook by calling.
 
 # + tags=["hide-input"] language="html"
-# <iframe src='./mesh.html', scrolling="no", onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
-# style="height:600px;width:100%;border:none;overflow:hidden;">></iframe>
+# <iframe src='./mesh.html' scrolling="no" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:600px;width:100%;border:none;overflow:hidden;"></iframe> <!--  # noqa, >
