@@ -14687,14 +14687,16 @@ div.jp-OutputPrompt {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Problem-statement">Problem statement<a class="anchor-link" href="#Problem-statement">&#182;</a></h2><p>We will solve the Helmholtz equation subject to a first order absorbing boundary condition:</p>
+<h2 id="Problem-statement">Problem statement<a class="anchor-link" href="#Problem-statement">&#182;</a></h2><p>We will solve the Helmholtz equation subject to a first order absorbing boundary condition:
 $$
 \begin{align*}
-\Delta u + k^2 u &amp;= 0 \qquad \text{in } \Omega,\\
-\nabla u \cdot \mathbf{n} - jku &amp;= g \qquad \text{on } \partial\Omega.
+\Delta u + k^2 u &amp;= 0 &amp;&amp; \text{in } \Omega,\\
+\nabla u \cdot \mathbf{n} - \mathrm{j}ku &amp;= g &amp;&amp; \text{on } \partial\Omega,
 \end{align*}
-$$<p>where $k$ is a piecewise constant wavenumber, and $g$ is the boundary source term computed as:</p>
-$$g = \nabla u_i \cdot \mathbf{n} - jku_i$$<p>and $u_i$ is the incoming plane wave.</p>
+$$
+where $k$ is a piecewise constant wavenumber, $\mathrm{j}=\sqrt{-1}$, and $g$ is the boundary source term computed as
+$$g = \nabla u_\text{inc} \cdot \mathbf{n} - \mathrm{j}ku_\text{inc}$$
+for an incoming plane wave $u_\text{inc}$.</p>
 
 </div>
 </div>
@@ -14782,7 +14784,7 @@ Info    : Done reading &#39;domain.msh&#39;
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>In this problem, the wave number in the different parts of the domain depends on cell markers, inputted through <code>cell_tags</code>.
-We use the fact that a Discontinuous Lagrange space of order 0 (cell-wise piecewise constants) has a one-to-one mapping with the cells local to the process.</p>
+We use the fact that a discontinuous Lagrange space of order 0 (cell-wise constants) has a one-to-one mapping with the cells local to the process.</p>
 
 </div>
 </div>
@@ -14826,8 +14828,7 @@ We use the fact that a Discontinuous Lagrange space of order 0 (cell-wise piecew
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-<iframe src='./wavenumber.html', scrolling="no", onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));'
-style="height:800px;width:100%;border:none;overflow:hidden;">></iframe>
+<iframe src='./wavenumber.html' scrolling="no" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:800px;width:100%;border:none;overflow:hidden;"></iframe>  <!--  # noqa, >
 
 </div>
 
@@ -14886,7 +14887,7 @@ style="height:800px;width:100%;border:none;overflow:hidden;">></iframe>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Next, we can define the variational problem, using a 4th order Lagrange space. Note that as we are using complex valued functions, we have to use the appropriate inner product, see <a href="https://jorgensd.github.io/dolfinx-tutorial/chapter1/complex_mode.html">DOLFINx tutorial: Complex numbers</a> for more information.</p>
+<p>Next, we define the variational problem using a 4th order Lagrange space. Note that as we are using complex valued functions, we have to use the appropriate inner product; see <a href="https://jorgensd.github.io/dolfinx-tutorial/chapter1/complex_mode.html">DOLFINx tutorial: Complex numbers</a> for more information.</p>
 
 </div>
 </div>
@@ -15137,22 +15138,6 @@ $$ -\int_\Omega \nabla u \cdot \nabla \bar{v} ~ dx + \int_\Omega k^2 u \,\bar{v}
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div></section></section>
 </div>
 </div>
