@@ -28,6 +28,10 @@ jobs:
         run: |
           pip3 install jupyter-book
 
+      - name: flake8 checks
+        run: |
+          pip3 install flake8-nb
+          flake8-nb *.ipynb
 
       - name: Test building the book
         run: 
