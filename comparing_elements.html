@@ -425,19 +425,18 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#crouzeix-raviart-crouzeix-raviart">
+  <a class="reference internal nav-link" href="#crouzeix-raviart">
    Crouzeix-Raviart
-   <span class="xref cite">
-    crouzeix-raviart
-   </span>
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space-crouzeix-falk">
+  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space">
    Piecewise linear pressure space
-   <span class="xref cite">
-    crouzeix-falk
-   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#taylor-hood-element">
+   Taylor-Hood Element
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -555,19 +554,18 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#crouzeix-raviart-crouzeix-raviart">
+  <a class="reference internal nav-link" href="#crouzeix-raviart">
    Crouzeix-Raviart
-   <span class="xref cite">
-    crouzeix-raviart
-   </span>
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space-crouzeix-falk">
+  <a class="reference internal nav-link" href="#piecewise-linear-pressure-space">
    Piecewise linear pressure space
-   <span class="xref cite">
-    crouzeix-falk
-   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#taylor-hood-element">
+   Taylor-Hood Element
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -984,9 +982,9 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </div>
 </section>
-<section id="crouzeix-raviart-crouzeix-raviart">
-<h2>Crouzeix-Raviart <span id="id2">[<a class="reference internal" href="#id9" title="Michel Crouzeix and Pierre-Arnaud Raviart. Conforming and nonconforming finite element methods for solving the stationary Stokes equations. Revue Française d'Automatique, Informatique et Recherche Opérationnelle, 3:33–75, 1973. doi:10.1051/m2an/197307R300331.">2</a>]</span><a class="headerlink" href="#crouzeix-raviart-crouzeix-raviart" title="Permalink to this headline">#</a></h2>
-<p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart element is used for the velocity space.</p>
+<section id="crouzeix-raviart">
+<h2>Crouzeix-Raviart<a class="headerlink" href="#crouzeix-raviart" title="Permalink to this headline">#</a></h2>
+<p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart <span id="id2">[<a class="reference internal" href="#id9" title="Michel Crouzeix and Pierre-Arnaud Raviart. Conforming and nonconforming finite element methods for solving the stationary Stokes equations. Revue Française d'Automatique, Informatique et Recherche Opérationnelle, 3:33–75, 1973. doi:10.1051/m2an/197307R300331.">2</a>]</span> element is used for the velocity space.</p>
 <p><a class="reference internal" href="_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png"><img alt="_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png" src="_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-0-dofs-large.png"><img alt="_images/element-Lagrange-triangle-0-dofs-large.png" src="_images/element-Lagrange-triangle-0-dofs-large.png" style="width: 100px;" /></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1001,9 +999,9 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </div>
 </section>
-<section id="piecewise-linear-pressure-space-crouzeix-falk">
-<h2>Piecewise linear pressure space <span id="id3">[<a class="reference internal" href="#id8" title="Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. Mathematics of Computation, 52:437–456, 1989. doi:10.2307/2008475.">3</a>]</span><a class="headerlink" href="#piecewise-linear-pressure-space-crouzeix-falk" title="Permalink to this headline">#</a></h2>
-<p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle.</p>
+<section id="piecewise-linear-pressure-space">
+<h2>Piecewise linear pressure space<a class="headerlink" href="#piecewise-linear-pressure-space" title="Permalink to this headline">#</a></h2>
+<p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle <span id="id3">[<a class="reference internal" href="#id8" title="Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. Mathematics of Computation, 52:437–456, 1989. doi:10.2307/2008475.">3</a>]</span>.</p>
 <p><a class="reference internal" href="_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png"><img alt="_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png" src="_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-1-dofs-large.png"><img alt="_images/element-Lagrange-triangle-1-dofs-large.png" src="_images/element-Lagrange-triangle-1-dofs-large.png" style="width: 100px;" /></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1018,6 +1016,22 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 <div class="cell_output docutils container">
 <img alt="_images/comparing_elements_55_0.png" src="_images/comparing_elements_55_0.png" />
+</div>
+</div>
+</section>
+<section id="taylor-hood-element">
+<h2>Taylor-Hood Element<a class="headerlink" href="#taylor-hood-element" title="Permalink to this headline">#</a></h2>
+<p>Continuous Lagrange spaces for pressure and velocity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">element_u</span> <span class="o">=</span> <span class="n">VectorElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">element_p</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="s2">&quot;triangle&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">error_plot</span><span class="p">(</span><span class="n">element_u</span><span class="p">,</span> <span class="n">element_p</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/comparing_elements_58_0.png" src="_images/comparing_elements_58_0.png" />
 </div>
 </div>
 </section>
@@ -1092,7 +1106,7 @@ where \)</span>q_0<span class="math notranslate nohighlight">\(, \)</span>q_1$, 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/comparing_elements_66_0.png" src="_images/comparing_elements_66_0.png" />
+<img alt="_images/comparing_elements_69_0.png" src="_images/comparing_elements_69_0.png" />
 </div>
 </div>
 </section>
