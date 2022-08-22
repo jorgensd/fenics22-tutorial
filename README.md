@@ -2,7 +2,7 @@
 
 This repository contains the material that was used for the FEniCSx tutorial at the FEniCS 2022 conference.
 
-All the resources from this tutorial can be founds in [https://jorgensd.github.io/fenics22-tutorial](this Jupyter Book).
+All the resources from this tutorial can be found in [this Jupyter book](https://jorgensd.github.io/fenics22-tutorial).
 
 ## Developer notes
 
