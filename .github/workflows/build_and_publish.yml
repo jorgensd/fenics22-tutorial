@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v2 
 
       - name: Install dependencies
-        run: pip3 install notebook nbconvert jupyter-book --upgrade
+        run: pip3 install notebook nbconvert==6.5.3 jupyter-book --upgrade
 
       # Runs a single command using the runners shell
       - name: Build the book
