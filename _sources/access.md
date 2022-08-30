@@ -2,14 +2,14 @@
 
 The tutorial can be found at [jorgensd.github.io/fenics22-tutorial](https://jorgensd.github.io/fenics22-tutorial)
 
-# Further FEniCSx help
+## Further FEniCSx help
 
 Documentation of all the FEniCSx packages can be found at [docs.fenicsproject.org](https://docs.fenicsproject.org/).
 A large collection of code examples can be found in [the FEniCSx tutorial](https://jorgensd.github.io/dolfinx-tutorial/).
 
 Questions about using FEniCSx can be posted on the [FEniCS Discourse forum](https://fenicsproject.discourse.group/).
 
-# Citing this tutorials
+## Citing this tutorial
 
 If you wish to cite this tutorial, you can cite it as:
 
