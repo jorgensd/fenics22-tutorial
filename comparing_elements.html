@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="./" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>The Stokes equations &#8212; FEniCS 22 tutorial</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js"></script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script async="async" src="_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'comparing_elements';</script>
@@ -162,7 +165,18 @@ const thebe_selector_output = ".output, .cell_output"
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -426,7 +440,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="the-stokes-equations">
-<h1>The Stokes equations<a class="headerlink" href="#the-stokes-equations" title="Permalink to this heading">#</a></h1>
+<h1>The Stokes equations<a class="headerlink" href="#the-stokes-equations" title="Link to this heading">#</a></h1>
 <p>Authors: J.S. Dokken, M.W. Scroggs, S. Roggendorf</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{align*}
@@ -440,7 +454,7 @@ document.write(`
 <li><p>Use block-preconditioners</p></li>
 </ul>
 <section id="imports">
-<h2>Imports<a class="headerlink" href="#imports" title="Permalink to this heading">#</a></h2>
+<h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h2>
 <p>We start by importing most of the modules we will use in this tutorial.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -477,7 +491,7 @@ As we will dependend on many functions from this package, we import the componen
 </div>
 </section>
 <section id="defining-a-manufactured-solution">
-<h2>Defining a manufactured solution<a class="headerlink" href="#defining-a-manufactured-solution" title="Permalink to this heading">#</a></h2>
+<h2>Defining a manufactured solution<a class="headerlink" href="#defining-a-manufactured-solution" title="Link to this heading">#</a></h2>
 <p>We will use a known analytical solution to the Stokes equations in this tutorial. We define the exact velocity and pressure as the following:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -508,7 +522,7 @@ As we will dependend on many functions from this package, we import the componen
 </div>
 </section>
 <section id="defining-the-variational-form">
-<h2>Defining the variational form<a class="headerlink" href="#defining-the-variational-form" title="Permalink to this heading">#</a></h2>
+<h2>Defining the variational form<a class="headerlink" href="#defining-the-variational-form" title="Link to this heading">#</a></h2>
 <p>We will solve the PDE by creating a set of variational forms, one for each component of the problem. This leads to a blocked discrete system:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
@@ -548,7 +562,7 @@ A_{p,\mathbf{u}} &amp; 0
 </div>
 </section>
 <section id="boundary-conditions">
-<h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Permalink to this heading">#</a></h2>
+<h2>Boundary conditions<a class="headerlink" href="#boundary-conditions" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_velocity_bc</span><span class="p">(</span><span class="n">V</span><span class="p">):</span>
@@ -581,7 +595,7 @@ This means that the problem is singular, ie the pressure is only determined up t
 </div>
 </section>
 <section id="create-a-block-preconditioner">
-<h2>Create a block preconditioner<a class="headerlink" href="#create-a-block-preconditioner" title="Permalink to this heading">#</a></h2>
+<h2>Create a block preconditioner<a class="headerlink" href="#create-a-block-preconditioner" title="Link to this heading">#</a></h2>
 <p>We create a nested matrix <code class="docutils literal notranslate"><span class="pre">P</span></code> to use as the preconditioner.
 The top-left block of <code class="docutils literal notranslate"><span class="pre">P</span></code> is the top-left block of <code class="docutils literal notranslate"><span class="pre">A</span></code>.
 The bottom-right diagonal entry is a mass matrix.</p>
@@ -601,7 +615,7 @@ The bottom-right diagonal entry is a mass matrix.</p>
 </div>
 </section>
 <section id="assemble-the-nested-system">
-<h2>Assemble the nested system<a class="headerlink" href="#assemble-the-nested-system" title="Permalink to this heading">#</a></h2>
+<h2>Assemble the nested system<a class="headerlink" href="#assemble-the-nested-system" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">assemble_system</span><span class="p">(</span><span class="n">lhs_form</span><span class="p">,</span> <span class="n">rhs_form</span><span class="p">,</span> <span class="n">bcs</span><span class="p">):</span>
@@ -623,7 +637,7 @@ The bottom-right diagonal entry is a mass matrix.</p>
 </div>
 </section>
 <section id="petsc-krylov-subspace-solver">
-<h2>PETSc Krylov Subspace solver<a class="headerlink" href="#petsc-krylov-subspace-solver" title="Permalink to this heading">#</a></h2>
+<h2>PETSc Krylov Subspace solver<a class="headerlink" href="#petsc-krylov-subspace-solver" title="Link to this heading">#</a></h2>
 <p>In legacy DOLFIN, convenience functions were provided to interact with linear algebra packages such as PETSc.
 In DOLFINx, we instead supply users with the appropriate data types, so that the user can access all of the features of the linear package rather than being constrained to functions in our wrapper. One can also leverage the detailed documentation of PETSc. For blocked systems, see: <a class="reference external" href="https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices">https://petsc.org/release/docs/manual/ksp/?highlight=matnest#solving-block-matrices</a></p>
 <div class="cell docutils container">
@@ -656,7 +670,7 @@ In DOLFINx, we instead supply users with the appropriate data types, so that the
 </div>
 </section>
 <section id="compute-error-estimates">
-<h2>Compute error estimates<a class="headerlink" href="#compute-error-estimates" title="Permalink to this heading">#</a></h2>
+<h2>Compute error estimates<a class="headerlink" href="#compute-error-estimates" title="Link to this heading">#</a></h2>
 <p>In DOLFINx, assembling a scalar value does require any MPI-communication. <code class="docutils literal notranslate"><span class="pre">dolfinx.fem.petsc.assemble_scalar</span></code> will only integrate over the cells owned by the process.
 It is up to the user to gather the results, which can be gathered on for instance all processes, or a single process for outputting.</p>
 <div class="cell docutils container">
@@ -684,7 +698,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="solving-the-stokes-problem-with-a-block-preconditioner">
-<h2>Solving the Stokes problem with a block-preconditioner<a class="headerlink" href="#solving-the-stokes-problem-with-a-block-preconditioner" title="Permalink to this heading">#</a></h2>
+<h2>Solving the Stokes problem with a block-preconditioner<a class="headerlink" href="#solving-the-stokes-problem-with-a-block-preconditioner" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solve_stokes</span><span class="p">(</span><span class="n">u_element</span><span class="p">,</span> <span class="n">p_element</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
@@ -757,7 +771,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="piecewise-constant-pressure-spaces">
-<h2>Piecewise constant pressure spaces<a class="headerlink" href="#piecewise-constant-pressure-spaces" title="Permalink to this heading">#</a></h2>
+<h2>Piecewise constant pressure spaces<a class="headerlink" href="#piecewise-constant-pressure-spaces" title="Link to this heading">#</a></h2>
 <p>For our first element, we pair piecewise linear elements with piecewise constants.</p>
 <p><a class="reference internal" href="_images/element-Lagrange-triangle-1-dofs-large.png"><img alt="_images/element-Lagrange-triangle-1-dofs-large.png" src="_images/element-Lagrange-triangle-1-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-0-dofs-large.png"><img alt="_images/element-Lagrange-triangle-0-dofs-large.png" src="_images/element-Lagrange-triangle-0-dofs-large.png" style="width: 100px;" /></a></p>
 <p>Using these elements, we do not converge to the solution.</p>
@@ -775,7 +789,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="p2-dg0-fortin-phd">
-<h2>P2-DG0 <span id="id1">[<a class="reference internal" href="#id10" title="Michel Fortin. Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis. PhD thesis, Univ. Paris, 1972.">1</a>]</span><a class="headerlink" href="#p2-dg0-fortin-phd" title="Permalink to this heading">#</a></h2>
+<h2>P2-DG0 <span id="id1">[<a class="reference internal" href="#id10" title="Michel Fortin. Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis. PhD thesis, Univ. Paris, 1972.">1</a>]</span><a class="headerlink" href="#p2-dg0-fortin-phd" title="Link to this heading">#</a></h2>
 <p>One way to obtain convergence with a piecewise constant pressure space is to use a piecewise quadratic space for the velocity.</p>
 <p><a class="reference internal" href="_images/element-Lagrange-triangle-2-dofs-large.png"><img alt="_images/element-Lagrange-triangle-2-dofs-large.png" src="_images/element-Lagrange-triangle-2-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-0-dofs-large.png"><img alt="_images/element-Lagrange-triangle-0-dofs-large.png" src="_images/element-Lagrange-triangle-0-dofs-large.png" style="width: 100px;" /></a></p>
 <div class="cell docutils container">
@@ -792,7 +806,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="crouzeix-raviart">
-<h2>Crouzeix-Raviart<a class="headerlink" href="#crouzeix-raviart" title="Permalink to this heading">#</a></h2>
+<h2>Crouzeix-Raviart<a class="headerlink" href="#crouzeix-raviart" title="Link to this heading">#</a></h2>
 <p>Alternatively, the same order convergence can be achieved using fewer degrees of freedom if a Crouzeix-Raviart <span id="id2">[<a class="reference internal" href="#id9" title="Michel Crouzeix and Pierre-Arnaud Raviart. Conforming and nonconforming finite element methods for solving the stationary Stokes equations. Revue Française d'Automatique, Informatique et Recherche Opérationnelle, 3:33–75, 1973. doi:10.1051/m2an/197307R300331.">2</a>]</span> element is used for the velocity space.</p>
 <p><a class="reference internal" href="_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png"><img alt="_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png" src="_images/element-Crouzeix-Raviart-triangle-1-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-0-dofs-large.png"><img alt="_images/element-Lagrange-triangle-0-dofs-large.png" src="_images/element-Lagrange-triangle-0-dofs-large.png" style="width: 100px;" /></a></p>
 <div class="cell docutils container">
@@ -809,7 +823,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="piecewise-linear-pressure-space">
-<h2>Piecewise linear pressure space<a class="headerlink" href="#piecewise-linear-pressure-space" title="Permalink to this heading">#</a></h2>
+<h2>Piecewise linear pressure space<a class="headerlink" href="#piecewise-linear-pressure-space" title="Link to this heading">#</a></h2>
 <p>When using a piecewise linear pressure space, we could again try using a velocity space one degree higher, but we would again observe that there is no convergence. In order to achieve convergence, we can augment the quadratic space with a cubic bubble function on the triangle <span id="id3">[<a class="reference internal" href="#id8" title="Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. Mathematics of Computation, 52:437–456, 1989. doi:10.2307/2008475.">3</a>]</span>.</p>
 <p><a class="reference internal" href="_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png"><img alt="_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png" src="_images/element-bubble-enriched-Lagrange-triangle-2-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-1-dofs-large.png"><img alt="_images/element-Lagrange-triangle-1-dofs-large.png" src="_images/element-Lagrange-triangle-1-dofs-large.png" style="width: 100px;" /></a></p>
 <div class="cell docutils container">
@@ -829,7 +843,7 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="taylor-hood-element">
-<h2>Taylor-Hood Element<a class="headerlink" href="#taylor-hood-element" title="Permalink to this heading">#</a></h2>
+<h2>Taylor-Hood Element<a class="headerlink" href="#taylor-hood-element" title="Link to this heading">#</a></h2>
 <p>Continuous Lagrange spaces for pressure and velocity.</p>
 <p><a class="reference internal" href="_images/element-Lagrange-triangle-3-dofs-large.png"><img alt="_images/element-Lagrange-triangle-3-dofs-large.png" src="_images/element-Lagrange-triangle-3-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-2-dofs-large.png"><img alt="_images/element-Lagrange-triangle-2-dofs-large.png" src="_images/element-Lagrange-triangle-2-dofs-large.png" style="width: 100px;" /></a></p>
 <div class="cell docutils container">
@@ -846,14 +860,14 @@ It is up to the user to gather the results, which can be gathered on for instanc
 </div>
 </section>
 <section id="piecewise-quadratic-pressure-space-crouzeix-falk">
-<h2>Piecewise quadratic pressure space <span id="id4">[<a class="reference internal" href="#id8" title="Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. Mathematics of Computation, 52:437–456, 1989. doi:10.2307/2008475.">3</a>]</span><a class="headerlink" href="#piecewise-quadratic-pressure-space-crouzeix-falk" title="Permalink to this heading">#</a></h2>
+<h2>Piecewise quadratic pressure space <span id="id4">[<a class="reference internal" href="#id8" title="Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. Mathematics of Computation, 52:437–456, 1989. doi:10.2307/2008475.">3</a>]</span><a class="headerlink" href="#piecewise-quadratic-pressure-space-crouzeix-falk" title="Link to this heading">#</a></h2>
 <p>When using a piecewise quadratic space, we can use a cubic velocity space augmented with quartic bubbles.</p>
 <p><a class="reference internal" href="_images/element-bubble-enriched-Lagrange-triangle-3-dofs-large.png"><img alt="_images/element-bubble-enriched-Lagrange-triangle-3-dofs-large.png" src="_images/element-bubble-enriched-Lagrange-triangle-3-dofs-large.png" style="width: 100px;" /></a><a class="reference internal" href="_images/element-Lagrange-triangle-2-dofs-large.png"><img alt="_images/element-Lagrange-triangle-2-dofs-large.png" src="_images/element-Lagrange-triangle-2-dofs-large.png" style="width: 100px;" /></a></p>
 <section id="custom-elements">
-<h3>Custom elements<a class="headerlink" href="#custom-elements" title="Permalink to this heading">#</a></h3>
+<h3>Custom elements<a class="headerlink" href="#custom-elements" title="Link to this heading">#</a></h3>
 <p>We have to define this velocity element as a custom element (it cannot be created as an enriched element, as the basis functions of degree 3 Lagrange and degree 4 bubbles are not linearly independent). More examples of how custom elements can be created can be found <a class="reference external" href="https://docs.fenicsproject.org/basix/v0.5.0/python/demo/demo_custom_element.py.html">in the Basix documentation</a>.</p>
 <section id="defining-the-polynomial-space">
-<h4>Defining the polynomial space<a class="headerlink" href="#defining-the-polynomial-space" title="Permalink to this heading">#</a></h4>
+<h4>Defining the polynomial space<a class="headerlink" href="#defining-the-polynomial-space" title="Link to this heading">#</a></h4>
 <p>When creating a custom element, we must input the coefficients that define a basis of the set of polynomials that our element spans. In this example, we will represent the 9 functions in our space in terms of the 10 orthonormal polynomials of degree <span class="math notranslate nohighlight">\(\leqslant3\)</span> on a quadrilateral, so we create a 9 by 10 matrix.</p>
 <p>A polynomial <span class="math notranslate nohighlight">\(f\)</span> on the triangle can be written as
 $<span class="math notranslate nohighlight">\(f(x,y)=\sum_i\left(\int_0^1\int_0^{1-y}f(x, y)q_i(x, y) \,\mathrm{d}x\,\mathrm{d}y\right)q_i(x,y),\)</span><span class="math notranslate nohighlight">\(
@@ -878,7 +892,7 @@ where \)</span>q_0<span class="math notranslate nohighlight">\(, \)</span>q_1$, 
 </div>
 </section>
 <section id="interpolation">
-<h4>Interpolation<a class="headerlink" href="#interpolation" title="Permalink to this heading">#</a></h4>
+<h4>Interpolation<a class="headerlink" href="#interpolation" title="Link to this heading">#</a></h4>
 <p>Next, we compute the points and matrices that define how functions can be interpolated into this space. For this element, all the DOFs are point evaluations, so we create lists of these points and (reshaped) identity matrices.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -903,7 +917,7 @@ where \)</span>q_0<span class="math notranslate nohighlight">\(, \)</span>q_1$, 
 </div>
 </section>
 <section id="creating-the-element">
-<h4>Creating the element<a class="headerlink" href="#creating-the-element" title="Permalink to this heading">#</a></h4>
+<h4>Creating the element<a class="headerlink" href="#creating-the-element" title="Link to this heading">#</a></h4>
 <p>We now create the element by passing in the information we created above, as well as the cell type, value shape, number of derivatives used by the DOFs, map type, whether the element is discontinuous, the highest degree Lagrange space that is a subspace of the element, and the polynomial degree of the element.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -923,23 +937,28 @@ where \)</span>q_0<span class="math notranslate nohighlight">\(, \)</span>q_1$, 
 </section>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <p>The images of elements used in this example were taken from DefElement <span id="id5">[<a class="reference internal" href="#id11" title="The DefElement contributors. DefElement: an encyclopedia of finite element definitions. https://defelement.com, 2022. [Online; accessed 15-August-2022].">4</a>]</span>.</p>
 <div class="docutils container" id="id6">
-<dl class="citation">
-<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>Michel Fortin. <em>Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis</em>. PhD thesis, Univ. Paris, 1972.</p>
-</dd>
-<dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p>Michel Crouzeix and Pierre-Arnaud Raviart. Conforming and nonconforming finite element methods for solving the stationary Stokes equations. <em>Revue Française d'Automatique, Informatique et Recherche Opérationnelle</em>, 3:33–75, 1973. <a class="reference external" href="https://doi.org/10.1051/m2an/197307R300331">doi:10.1051/m2an/197307R300331</a>.</p>
-</dd>
-<dt class="label" id="id8"><span class="brackets">3</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>)</span></dt>
-<dd><p>Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. <em>Mathematics of Computation</em>, 52:437–456, 1989. <a class="reference external" href="https://doi.org/10.2307/2008475">doi:10.2307/2008475</a>.</p>
-</dd>
-<dt class="label" id="id11"><span class="brackets"><a class="fn-backref" href="#id5">4</a></span></dt>
-<dd><p>The DefElement contributors. DefElement: an encyclopedia of finite element definitions. <a class="reference external" href="https://defelement.com">https://defelement.com</a>, 2022. [Online; accessed 15-August-2022].</p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Michel Fortin. <em>Calcul numérique des écoulements des fluides de Bingham et des fluides newtoniens incompressibles par la méthode des éléments finis</em>. PhD thesis, Univ. Paris, 1972.</p>
+</div>
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Michel Crouzeix and Pierre-Arnaud Raviart. Conforming and nonconforming finite element methods for solving the stationary Stokes equations. <em>Revue Française d'Automatique, Informatique et Recherche Opérationnelle</em>, 3:33–75, 1973. <a class="reference external" href="https://doi.org/10.1051/m2an/197307R300331">doi:10.1051/m2an/197307R300331</a>.</p>
+</div>
+<div class="citation" id="id8" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<p>Michel Crouzeix and Richard S. Falk. Nonconforming finite elements for the Stokes problem. <em>Mathematics of Computation</em>, 52:437–456, 1989. <a class="reference external" href="https://doi.org/10.2307/2008475">doi:10.2307/2008475</a>.</p>
+</div>
+<div class="citation" id="id11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">4</a><span class="fn-bracket">]</span></span>
+<p>The DefElement contributors. DefElement: an encyclopedia of finite element definitions. <a class="reference external" href="https://defelement.com">https://defelement.com</a>, 2022. [Online; accessed 15-August-2022].</p>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -1056,7 +1075,7 @@ By The FEniCS project
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>
