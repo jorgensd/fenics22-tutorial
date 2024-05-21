@@ -5,7 +5,6 @@ from subprocess import check_call
 def post_save(model, os_path, contents_manager):
     """post-save hook for converting notebooks to .py scripts"""
     print(model['type'])
-    assert False
     if model['type'] != 'notebook':
         return  # only do this for notebooks
     d, fname = os.path.split(os_path)
