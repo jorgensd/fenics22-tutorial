@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64.4.0", "wheel", "pip>=22.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "FEniCS22_Tutorial"
+version = "0.6.0"
+dependencies = [
+    "fenics-dolfinx>=0.6.0",
+]
+
+[project.optional-dependencies]
+dev = ["jupyter-book", "flake8-nb", "mypy"]
+
+[tool.setuptools]
+packages = []
+
+
+[tool.jupytext]
+formats = "ipynb,py:percent"
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["basix", "dolfinx", "ffcx", "ufl"]
+known-third-party = ["gmsh", "numpy", "pytest"]
+section-order = [
+    "future",
+    "standard-library",
+    "mpi",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+"mpi" = ["mpi4py", "petsc4py"]
