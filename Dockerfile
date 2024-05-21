@@ -1,4 +1,4 @@
-FROM dolfinx/lab:v0.5.0
+FROM dolfinx/lab:v0.6.0-r1
 
 # create user with a home directory
 ARG NB_USER
