@@ -1,4 +1,4 @@
-name: Test tutorial against DOLFINx nightly build
+name: Test tutorial against DOLFINx
 
 on:
 
@@ -9,30 +9,62 @@ on:
     branches:
       - main
 
-  # Allows you to run this workflow manually from the Actions tab
+  workflow_call:
+    inputs:
+      tag:
+        description: "Tag of DOLFINx docker image"
+        default: "v0.6.0-r1"
+        required: true
+        type: string
   workflow_dispatch:
-
+    inputs:
+      tag:
+        description: "Tag of DOLFINx docker image"
+        default: "v0.6.0-r1"
+        required: true
+        type: string
   schedule:
     - cron: "* 9 * * 1"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+env:
+  DEFAULT_TAG: v0.6.0-r1
+
 jobs:
-  test-nightly:
-    runs-on: ubuntu-22.04
-    container: dolfinx/lab:nightly
+  get_image_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.docker_tag.outputs.image }}
+    steps:
+      - id: docker_tag
+        run: echo "image=${{ inputs.tag || env.DEFAULT_TAG }}" >> $GITHUB_OUTPUT
+
+  build-book:
+    needs: get_image_tag
+    runs-on: ubuntu-latest
+    container: dolfinx/lab:${{ needs.get_image_tag.outputs.image }}
+    env:
+      PYVISTA_JUPYTER_BACKEND: static
+      PYVISTA_OFF_SCREEN: false
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
-          pip3 install jupyter-book
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -e .[dev] -U
 
       - name: flake8 checks
-        run: |
-          pip3 install flake8-nb==0.4.0
+        run: 
           flake8-nb *.ipynb
 
       - name: Test building the book
         run: 
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build . --all
+          jupyter-book build . --all
+
+      - name: Upload the book
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: _build/html

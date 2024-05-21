@@ -7,44 +7,61 @@ on:
   push:
     branches: [main]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  # Weekly build on Mondays at 8 am
   schedule:
     - cron: "0 8 * * 1"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  build-docs:
+    uses: ./.github/workflows/test-build.yml
+    with:
+      tag: "v0.6.0-r1"
+
+  deploy:
+    needs: [build-docs]
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
-    container: dolfinx/lab:v0.5.0
-
-    env:
-      HDF5_MPI: "ON"
-      CC: mpicc
-      HDF5_DIR: "/usr/local/"
-      DISPLAY: ":99.0"
-      PYVISTA_OFF_SCREEN: true
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2 
-
-      - name: Install dependencies
-        run: pip3 install notebook nbconvert==6.5.3 jupyter-book --upgrade
-
-      # Runs a single command using the runners shell
-      - name: Build the book
-        run: |
-          PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false jupyter-book build --all .
-
-      # Push book to HTML to github pages
-      - name: GitHub Pages action
-        uses: peaceiris/actions-gh-pages@v3.5.9
+      - name: Download docs artifact
+        # docs artifact is uploaded by build-docs job
+        uses: actions/download-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_build/html
+          name: docs
+          path: "./public"
+
+      - name: Download docs artifact
+        # docs artifact is uploaded by build-docs job
+        uses: actions/download-artifact@v4
+        with:
+          name: code-coverage-report
+          path: "./public/code-coverage-report"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./public"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
