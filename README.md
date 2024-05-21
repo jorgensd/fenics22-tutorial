@@ -92,10 +92,11 @@ To check the config paths, call:
 ```bash
 jupyter server --show-config
 jupyter notebook --show-config
+jupyer lab --show-config
 ```
 
-If you run the code with `dolfinx/lab:v0.6.0-r1` using for instance:
+If you run the code with `dolfinx/lab:v0.7.3` using for instance:
 ```bash
-docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dolfinx/lab:v0.6.0-r1
+docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dolfinx/lab:v0.7.3
 ```
 no copying is required.
