@@ -1,7 +1,6 @@
 name: Test tutorial against DOLFINx
 
 on:
-
   push:
     branches: [main]
 
@@ -28,7 +27,6 @@ on:
 
 env:
   DEFAULT_TAG: v0.8.0
-
 jobs:
   get_image_tag:
     runs-on: ubuntu-latest
@@ -55,12 +53,10 @@ jobs:
           python3 -m pip install -e .[dev] -U
 
       - name: flake8 checks
-        run: 
-          flake8-nb *.ipynb
+        run: flake8-nb *.ipynb
 
       - name: Test building the book
-        run: 
-          jupyter-book build . --all
+        run: jupyter-book build . --all
 
       - name: Upload the book
         if: always()
