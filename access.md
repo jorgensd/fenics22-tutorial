@@ -27,7 +27,3 @@ The BibTeX for this citation is:
          NOTE = {[Online; accessed 22-August-2022]}
 }
 ```
-
-## Contents
-```{tableofcontents}
-```
