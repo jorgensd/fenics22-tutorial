@@ -12,21 +12,21 @@ on:
     inputs:
       tag:
         description: "Tag of DOLFINx docker image"
-        default: "v0.8.0"
+        default: "stable"
         required: true
         type: string
   workflow_dispatch:
     inputs:
       tag:
         description: "Tag of DOLFINx docker image"
-        default: "v0.8.0"
+        default: "stable"
         required: true
         type: string
   schedule:
     - cron: "* 9 * * 1"
 
 env:
-  DEFAULT_TAG: v0.8.0
+  DEFAULT_TAG: stable
 jobs:
   get_image_tag:
     runs-on: ubuntu-latest
