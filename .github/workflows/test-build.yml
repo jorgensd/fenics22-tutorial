@@ -12,22 +12,21 @@ on:
     inputs:
       tag:
         description: "Tag of DOLFINx docker image"
-        default: "stable"
+        default: "v0.8.0"
         required: true
         type: string
   workflow_dispatch:
     inputs:
       tag:
         description: "Tag of DOLFINx docker image"
-        default: "stable"
+        default: "v0.8.0"
         required: true
         type: string
   schedule:
     - cron: "* 9 * * 1"
 
 env:
-  DEFAULT_TAG: stable
-
+  DEFAULT_TAG: v0.8.0
 jobs:
   get_image_tag:
     runs-on: ubuntu-latest
@@ -53,8 +52,13 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install -e .[dev] -U
 
-      - name: flake8 checks
-        run: flake8-nb *.ipynb
+      - name: Ruff formatting checks
+        run: |
+          ruff format .
+          ruff check .
+
+      - name: Run mypy
+        run: python3 -m mypy .
 
       - name: Test building the book
         run: jupyter-book build . --all

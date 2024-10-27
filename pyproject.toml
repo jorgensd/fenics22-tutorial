@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FEniCS22_Tutorial"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
-    "fenics-dolfinx>=0.7.0", "pyvista[jupyter]", "imageio"
+    "fenics-dolfinx>=0.8.0", "pyvista[jupyter]", "imageio"
 ]
 
 [project.optional-dependencies]
-dev = ["jupyter-book", "flake8-nb", "mypy"]
+dev = ["jupyter-book", "ruff", "mypy"]
 
 [tool.setuptools]
 packages = []
@@ -20,16 +20,40 @@ packages = []
 formats = "ipynb,py:percent"
 
 
+[tool.mypy]
+ignore_missing_imports = true
+
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+      "E",      # pycodestyle
+      "W",      # pycodestyle
+      "F",      # pyflakes
+      "I",      # isort - use standalone isort
+      "RUF",    # Ruff-specific rules
+      "UP",     # pyupgrade
+      "ICN",    # flake8-import-conventions
+      "NPY",    # numpy-specific rules
+      "FLY",    # use f-string not static joins
+      "NPY201", # numpy 2.x ruleset
+]
+ignore = ["UP007", "RUF012"]
+allowed-confusables = ["σ"]
+
 [tool.ruff.lint.isort]
 known-first-party = ["basix", "dolfinx", "ffcx", "ufl"]
-known-third-party = ["gmsh", "numpy", "pytest"]
+known-third-party = ["gmsh", "numba", "numpy", "pytest", "pyvista", "pyamg"]
 section-order = [
-    "future",
-    "standard-library",
-    "mpi",
-    "third-party",
-    "first-party",
-    "local-folder",
+      "future",
+      "standard-library",
+      "mpi",
+      "third-party",
+      "first-party",
+      "local-folder",
 ]
 
 [tool.ruff.lint.isort.sections]
