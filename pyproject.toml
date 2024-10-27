@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["jupyter-book", "flake8-nb", "mypy"]
+dev = ["jupyter-book", "ruff", "mypy"]
 
 [tool.setuptools]
 packages = []
