@@ -26,7 +26,7 @@ on:
     - cron: "* 9 * * 1"
 
 env:
-  DEFAULT_TAG: stable
+  DEFAULT_TAG: nightly
 jobs:
   get_image_tag:
     runs-on: ubuntu-latest
