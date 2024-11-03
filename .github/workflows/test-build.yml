@@ -61,7 +61,7 @@ jobs:
         run: python3 -m mypy .
 
       - name: Test building the book
-        run: jupyter-book build . --all
+        run: jupyter-book build . -W --all
 
       - name: Upload the book
         if: always()
