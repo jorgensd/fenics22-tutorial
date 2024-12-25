@@ -43,6 +43,7 @@ jobs:
     env:
       PYVISTA_JUPYTER_BACKEND: static
       PYVISTA_OFF_SCREEN: false
+      LIBGL_ALWAYS_SOFTWARE: 1
 
     steps:
       - uses: actions/checkout@v4
