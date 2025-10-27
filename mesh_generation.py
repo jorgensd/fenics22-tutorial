@@ -28,7 +28,7 @@ def generate_mesh(filename: str, lmbda: int, order: int, verbose: bool = False):
 
         # Add domain
         r0 = gmsh.model.occ.addRectangle(-5 * lmbda, -5 * lmbda, 0.0, 10 * lmbda, 10 * lmbda)
-        inclusive_rectangle, _ = gmsh.model.occ.fragment([(2, r0)], [(2, c1), (2, c2)])
+        _inclusive_rectangle, _ = gmsh.model.occ.fragment([(2, r0)], [(2, c1), (2, c2)])
 
         gmsh.model.occ.synchronize()
 
