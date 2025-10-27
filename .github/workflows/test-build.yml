@@ -67,5 +67,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: docs
+          name: docs-${{ inputs.tag || env.DEFAULT_TAG }}
           path: _build/html

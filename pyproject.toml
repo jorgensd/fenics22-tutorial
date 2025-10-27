@@ -4,13 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FEniCS22_Tutorial"
-version = "0.8.0"
-dependencies = [
-    "fenics-dolfinx>=0.8.0", "pyvista[jupyter]", "imageio"
-]
+version = "0.10.0"
+dependencies = ["fenics-dolfinx>=0.10.0", "pyvista[jupyter]>0.45", "imageio"]
 
 [project.optional-dependencies]
-dev = ["jupyter-book", "ruff", "mypy"]
+dev = ["jupyter-book", "ruff", "mypy", "sphinx_codeautolink"]
 
 [tool.setuptools]
 packages = []

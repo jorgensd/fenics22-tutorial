@@ -26,6 +26,11 @@ jobs:
   build-docs:
     uses: ./.github/workflows/test-build.yml
     with:
+      tag: "stable"
+
+  test-nightly:
+    uses: ./.github/workflows/test-build.yml
+    with:
       tag: "nightly"
 
   deploy:
@@ -41,7 +46,7 @@ jobs:
         # docs artifact is uploaded by build-docs job
         uses: actions/download-artifact@v5
         with:
-          name: docs
+          name: docs-stable
           path: "./public"
 
       - name: Upload artifact
