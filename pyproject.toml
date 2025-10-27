@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FEniCS22_Tutorial"
-version = "0.10.0"
+version = "0.11.0.dev0"
 dependencies = ["fenics-dolfinx>=0.10.0", "pyvista[jupyter]>0.45", "imageio"]
 
 [project.optional-dependencies]
