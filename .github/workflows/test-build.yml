@@ -65,7 +65,7 @@ jobs:
 
       - name: Upload the book
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: docs-${{ inputs.tag || env.DEFAULT_TAG }}
           path: _build/html
